@@ -1,252 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookMyClass</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
-  </head>
-  <body>
+</head>
+<body>
     <div id="app">
-      <!-- Header -->
-      <header class="header">
-        <div class="container">
-          <div class="d-flex justify-content-between align-items-center py-3">
-            <div class="logo">
-              <i class="fas fa-book me-2"></i>
-              <span>BookMyClass</span>
-            </div>
-            <div class="header-icons">
-              <button class="btn receipt-btn me-2">
-                <i class="fas fa-file-invoice"></i>
-              </button>
-              <button
-                class="btn cart-btn"
-                :class="{ 'disabled': cartCount === 0 }"
-              >
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-badge" v-if="cartCount > 0"
-                  >{{ cartCount }}</span
-                >
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!-- Main Content -->
-      <main class="main">
-        <div class="container-fluid">
-          <div class="row">
-            <!-- Sidebar -->
-            <aside class="col-md-3 sidebar">
-              <div class="p-3">
-                <h6>FILTERS</h6>
-                <div class="mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Search..."
-                  />
-                </div>
-                <div class="mb-3">
-                  <select class="form-select">
-                    <option>All Categories</option>
-                    <option>School Classes</option>
-                    <option>Activities</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <select class="form-select">
-                    <option>Sort by Subject</option>
-                    <option>Sort by Location</option>
-                    <option>Sort by Price</option>
-                    <option>Sort by Spaces</option>
-                  </select>
-                </div>
-              </div>
-            </aside>
-
-            <!-- Content -->
-            <div class="col-md-9 content-area">
-              <!-- Advertising Banner -->
-              <div class="ad-banner mb-4">
-                <div class="banner-content">
-                  <div class="banner-text">
-                    <h2>
-                      Find the perfect after-school classes and activities for
-                      your child
-                    </h2>
-                    <p>
-                      Browse and book from our wide selection of academic
-                      classes and fun activities
-                    </p>
-                  </div>
-                  <div class="banner-image">
-                    <img
-                      src="assets/banner-image.jpg"
-                      alt="Kids learning"
-                      class="img-fluid"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Discounts -->
-              <div class="mb-4">
-                <h6>SPECIAL OFFERS</h6>
-                <div class="p-4 border">
-                  <p>Discounts will appear here</p>
-                </div>
-              </div>
-
-              <!-- Classes -->
-              <div>
-                <h6>ALL CLASSES</h6>
-                <div class="lesson-grid">
-                  <div class="row">
-                    <div
-                      class="col-md-6 col-lg-4 mb-4"
-                      v-for="lesson in lessons"
-                      :key="lesson.id"
-                    >
-                      <div class="lesson-card">
-                        <div class="card-icon">
-                          <i :class="['fas', lesson.icon]"></i>
-                        </div>
-
-                        <div class="card-header">
-                          <span class="subject">{{ lesson.subject }}</span>
-                          <span class="rating">
-                            <i class="fas fa-star"></i>
-                            {{ lesson.rating }}
-                          </span>
-                        </div>
-
-                        <div class="card-body">
-                          <h5 class="title">{{ lesson.title }}</h5>
-                          <p class="description">{{ lesson.description }}</p>
-
-                          <div class="details">
-                            <div class="detail-item">
-                              <i class="fas fa-user"></i>
-                              <span>{{ lesson.professor }}</span>
-                            </div>
-                            <div class="detail-item">
-                              <i class="fas fa-map-marker-alt"></i>
-                              <span>{{ lesson.location }}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="card-footer">
-                          <div class="price-section">
-                            <span class="price">Rs {{ lesson.price }}</span>
-                            <div
-                              class="spaces-display"
-                              :class="{ 'low-spaces': lesson.spaces < 5 }"
-                            >
-                              <div class="spaces-bar">
-                                <div
-                                  class="spaces-fill"
-                                  :style="{ width: (lesson.spaces / lesson.initialSpaces) * 100 + '%' }"
-                                ></div>
-                              </div>
-                              <span class="spaces-text"
-                                >{{ lesson.spaces }} / {{ lesson.initialSpaces
-                                }} left</span
-                              >
-                            </div>
-                          </div>
-
-                          <button
-                            class="btn add-cart-btn"
-                            :disabled="lesson.spaces === 0"
-                            @click="addToCart(lesson)"
-                          >
-                            <i class="fas fa-cart-plus"></i>
-                            Add to Cart
-                          </button>
-                        </div>
-                      </div>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-book me-2"></i>
+                        <span>BookMyClass</span>
                     </div>
-                  </div>
+                    <div class="header-icons">
+                        <button class="btn receipt-btn">
+                            <i class="fas fa-file-invoice"></i>
+                        </button>
+                        <button class="btn cart-btn" :class="{ 'disabled': cartCount === 0 }">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-badge" v-if="cartCount > 0">{{ cartCount }}</span>
+                        </button>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </main>
+        </header>
 
-      <!-- Footer -->
-      <footer class="footer mt-5">
-        <div class="container">
-          <div class="row">
-            <!-- About Section -->
-            <div class="col-md-6 mb-4">
-              <h6>ABOUT BOOKMYCLASS</h6>
-              <p class="small">
-                BookMyClass helps students and parents easily browse and book
-                after-school classes and activities — from academic subjects to
-                creative workshops and sports.
-              </p>
-            </div>
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Sidebar -->
+                    <aside class="col-md-3 sidebar">
+                        <div class="sidebar-content">
+                            <h6>FILTERS</h6>
+                            <div class="filter-group">
+                                <input type="text" class="form-control search-box" placeholder="Search...">
+                            </div>
+                            <div class="filter-group">
+                                <label>Category</label>
+                                <select class="form-select">
+                                    <option>All Categories</option>
+                                    <option>School Classes</option>
+                                    <option>Activities</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Sort by</label>
+                                <select class="form-select">
+                                    <option>Subject</option>
+                                    <option>Location</option>
+                                    <option>Price</option>
+                                    <option>Spaces</option>
+                                </select>
+                            </div>
+                        </div>
+                    </aside>
+                    
+                    <!-- Content -->
+                    <div class="col-md-9 content-area">
+                        <!-- Advertising Banner -->
+                        <div class="ad-banner mb-4">
+                            <div class="banner-content">
+                                <div class="banner-text">
+                                    <h2>Find the perfect after-school classes and activities for your child</h2>
+                                    <p>Browse and book from our wide selection of academic classes and fun activities</p>
+                                </div>
+                                <div class="banner-image">
+                                    <img src="assets/banner-image.png" alt="Kids learning" class="img-fluid">
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Contact Section -->
-            <div class="col-md-6 mb-4">
-              <h6>CONTACT US</h6>
-              <div class="small">
-                <p class="mb-1">
-                  <i class="fas fa-envelope me-2"></i>contact@bookmyclass.com
-                </p>
-                <p class="mb-1">
-                  <i class="fas fa-phone me-2"></i>+230 123 4567
-                </p>
-                <p class="mb-1">
-                  <i class="fas fa-map-marker-alt me-2"></i>Grand Port,
-                  Mauritius
-                </p>
-              </div>
-            </div>
-          </div>
+                        <!-- Discounts -->
+                        <div class="mb-4">
+                            <h6 class="section-title">SPECIAL OFFERS</h6>
+                            <div class="discount-carousel" v-if="discountedLessons.length > 0">
+                                <div class="carousel-container">
+                                    <div class="carousel-track" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+                                        <div class="carousel-slide" v-for="(lesson, index) in discountedLessons" :key="lesson.id">
+                                            <div class="discount-card">
+                                                <div class="offer-tags">
+                                                    <div class="discount-tag">
+                                                        {{ lesson.discountPercent }}% OFF
+                                                    </div>
+                                                    <div class="time-tag" :class="getUrgencyClass(lesson.daysLeft)">
+                                                        {{ getDaysText(lesson.daysLeft) }}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="card-top">
+                                                    <i :class="['fas', lesson.icon]"></i>
+                                                    <div class="card-title">
+                                                        <h5>{{ lesson.title }}</h5>
+                                                        <span class="subject">{{ lesson.subject }}</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="card-middle">
+                                                    <p>{{ lesson.description }}</p>
+                                                    <div class="instructor">
+                                                        <i class="fas fa-user"></i>
+                                                        {{ lesson.professor }}
+                                                    </div>
+                                                    <div class="location">
+                                                        <i class="fas fa-map-marker-alt"></i>
+                                                        {{ lesson.location }}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="card-bottom">
+                                                    <div class="price-info">
+                                                        <span class="old-price">Rs {{ lesson.price }}</span>
+                                                        <span class="new-price">Rs {{ calculateDiscountedPrice(lesson) }}</span>
+                                                    </div>
+                                                    <div class="spaces-info">
+                                                        <span class="spaces-text" :class="{ 'few-spaces': lesson.spaces < 5 }">
+                                                            {{ lesson.spaces }} spaces available
+                                                        </span>
+                                                    </div>
+                                                    <button class="btn add-btn" 
+                                                            :disabled="lesson.spaces === 0"
+                                                            @click="addToCart(lesson)">
+                                                        <i class="fas fa-cart-plus"></i>
+                                                        Add to Cart
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="carousel-nav prev" @click="prevSlide" :disabled="currentSlide === 0">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="carousel-nav next" @click="nextSlide" :disabled="currentSlide >= discountedLessons.length - 1">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="carousel-dots">
+                                    <span v-for="(lesson, index) in discountedLessons" 
+                                          :key="index"
+                                          class="dot"
+                                          :class="{ active: currentSlide === index }"
+                                          @click="currentSlide = index">
+                                    </span>
+                                </div>
+                            </div>
+                            <div v-else class="no-discounts">
+                                <p>No special offers available at the moment. Check back later!</p>
+                            </div>
+                        </div>
 
-          <!-- Social Media -->
-          <div class="row">
-            <div class="col-12 text-center mb-3">
-              <div class="social-icons">
-                <a href="#" class="social-link me-3"
-                  ><i class="fab fa-facebook-f"></i
-                ></a>
-                <a href="#" class="social-link me-3"
-                  ><i class="fab fa-instagram"></i
-                ></a>
-                <a href="#" class="social-link"
-                  ><i class="fab fa-youtube"></i
-                ></a>
-              </div>
+                        <!-- Classes -->
+                        <div>
+                            <h6 class="section-title">ALL CLASSES</h6>
+                            <div class="classes-grid">
+                                <div class="row">
+                                    <div class="col-md-6 col-lg-4 mb-4" v-for="lesson in lessons" :key="lesson.id">
+                                        <div class="class-card">
+                                            <div class="card-top">
+                                                <i :class="['fas', lesson.icon]"></i>
+                                                <div class="card-title">
+                                                    <h5>{{ lesson.title }}</h5>
+                                                    <span class="subject">{{ lesson.subject }}</span>
+                                                </div>
+                                                <div class="rating">
+                                                    <i class="fas fa-star" v-for="n in lesson.rating" :key="n"></i>
+                                                    <i class="far fa-star" v-for="n in (5 - lesson.rating)" :key="'empty-' + n"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card-middle">
+                                                <p>{{ lesson.description }}</p>
+                                                <div class="instructor">
+                                                    <i class="fas fa-user"></i>
+                                                    {{ lesson.professor }}
+                                                </div>
+                                                <div class="location">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    {{ lesson.location }}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card-bottom">
+                                                <div class="price">Rs {{ lesson.price }}</div>
+                                                <div class="spaces-info">
+                                                    <span class="spaces-text" :class="{ 'few-spaces': lesson.spaces < 5 }">
+                                                        {{ lesson.spaces }} spaces available
+                                                    </span>
+                                                </div>
+                                                <button class="btn add-btn" 
+                                                        :disabled="lesson.spaces === 0"
+                                                        @click="addToCart(lesson)">
+                                                    <i class="fas fa-cart-plus"></i>
+                                                    Add to Cart
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+        </main>
 
-          <!-- Copyright -->
-          <div class="row">
-            <div class="col-12 text-center">
-              <p class="small mb-0">© 2025 BookMyClass. All rights reserved.</p>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-col">
+                        <h6>ABOUT BOOKMYCLASS</h6>
+                        <p>BookMyClass helps students and parents easily browse and book after-school classes and activities — from academic subjects to creative workshops and sports.</p>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h6>CONTACT US</h6>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>contact@bookmyclass.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+230 123 4567</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Grand Port, Mauritius</span>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h6>FOLLOW US</h6>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p>&copy; 2025 BookMyClass. All rights reserved.</p>
+                </div>
             </div>
-          </div>
-        </div>
-      </footer>
+        </footer>
     </div>
 
     <script src="js/app.js"></script>
-  </body>
+</body>
 </html>

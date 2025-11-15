@@ -2,6 +2,8 @@ let webstore = new Vue({
     el: "#app",
     data: {
         cartCount: 0,
+        cart: [],
+        currentSlide: 0,
         lessons: [
             {
                 id: "1",
@@ -50,8 +52,8 @@ let webstore = new Vue({
                 rating: 5,
                 discounted: true,
                 discountPercent: 15,
-                discountStart: "2025-01-15",
-                discountEnd: "2025-02-15",
+                discountStart: "2025-11-15",
+                discountEnd: "2025-11-25",
                 students: []
             },
             {
@@ -85,8 +87,8 @@ let webstore = new Vue({
                 rating: 5,
                 discounted: true,
                 discountPercent: 20,
-                discountStart: "2025-01-10",
-                discountEnd: "2025-01-30",
+                discountStart: "2025-11-10",
+                discountEnd: "2025-11-20",
                 students: []
             },
             {
@@ -136,8 +138,8 @@ let webstore = new Vue({
                 rating: 4,
                 discounted: true,
                 discountPercent: 25,
-                discountStart: "2025-01-20",
-                discountEnd: "2025-02-20",
+                discountStart: "2025-11-18",
+                discountEnd: "2025-11-28",
                 students: []
             },
             {
@@ -187,8 +189,8 @@ let webstore = new Vue({
                 rating: 5,
                 discounted: true,
                 discountPercent: 10,
-                discountStart: "2025-01-05",
-                discountEnd: "2025-01-25",
+                discountStart: "2025-11-12",
+                discountEnd: "2025-11-22",
                 students: []
             },
             {
@@ -238,8 +240,8 @@ let webstore = new Vue({
                 rating: 5,
                 discounted: true,
                 discountPercent: 30,
-                discountStart: "2025-01-12",
-                discountEnd: "2025-02-12",
+                discountStart: "2025-11-14",
+                discountEnd: "2025-11-24",
                 students: []
             },
             {
@@ -305,15 +307,86 @@ let webstore = new Vue({
                 rating: 5,
                 discounted: true,
                 discountPercent: 15,
-                discountStart: "2025-01-08",
-                discountEnd: "2025-01-28",
+                discountStart: "2025-11-16",
+                discountEnd: "2025-11-26",
                 students: []
             }
         ]
     },
+    computed: {
+        discountedLessons() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const discounted = this.lessons
+                .filter(lesson => {
+                    if (!lesson.discounted) return false;
+                    
+                    const discountEnd = new Date(lesson.discountEnd);
+                    discountEnd.setHours(23, 59, 59, 999);
+                    
+                    return discountEnd >= today;
+                })
+                .map(lesson => {
+                    const discountEnd = new Date(lesson.discountEnd);
+                    discountEnd.setHours(23, 59, 59, 999);
+                    
+                    const timeDiff = discountEnd.getTime() - today.getTime();
+                    const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                    
+                    return {
+                        ...lesson,
+                        daysLeft: Math.max(0, daysLeft)
+                    };
+                })
+                .sort((a, b) => a.daysLeft - b.daysLeft);
+            
+            return discounted;
+        }
+    },
     methods: {
         addToCart(lesson) {
-            console.log('Add to cart:', lesson.title);
+            if (lesson.spaces > 0) {
+                lesson.spaces--;
+                this.cartCount++;
+                
+                this.cart.push({
+                    lessonId: lesson.id,
+                    lessonTitle: lesson.title,
+                    price: lesson.price
+                });
+                
+                console.log('Added to cart:', lesson.title);
+                console.log('Spaces left:', lesson.spaces);
+            }
+        },
+        
+        calculateDiscountedPrice(lesson) {
+            return Math.round(lesson.price * (1 - lesson.discountPercent / 100));
+        },
+        
+        getUrgencyClass(daysLeft) {
+            if (daysLeft <= 1) return 'red';
+            if (daysLeft <= 3) return 'orange';
+            return 'green';
+        },
+        
+        getDaysText(daysLeft) {
+            if (daysLeft === 0) return 'Last day';
+            if (daysLeft === 1) return '1 day left';
+            return `${daysLeft} days left`;
+        },
+        
+        prevSlide() {
+            if (this.currentSlide > 0) {
+                this.currentSlide--;
+            }
+        },
+        
+        nextSlide() {
+            if (this.currentSlide < this.discountedLessons.length - 1) {
+                this.currentSlide++;
+            }
         }
     }
 });
