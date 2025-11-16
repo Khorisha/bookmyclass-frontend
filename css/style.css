@@ -1159,6 +1159,322 @@ body {
     border-color: #9CA3AF;
 }
 
+
+/* Payment Section */
+.payment-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #F8F9FA;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+}
+
+.payment-title {
+    color: #1F2937;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.payment-title i {
+    color: #6366F1;
+}
+
+/* Order Confirmation Modal */
+.confirmation-modal {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.confirmation-header {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 2rem;
+    position: relative;
+}
+
+.confirmation-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.confirmation-title i {
+    font-size: 2.5rem;
+}
+
+.confirmation-title h3 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.approved-stamp {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: #FFFFFF;
+    color: #10B981;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transform: rotate(5deg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-body {
+    padding: 2rem;
+}
+
+.confirmation-receipt {
+    background: #FFFFFF;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 2rem;
+}
+
+.receipt-header-confirm {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #E5E7EB;
+}
+
+.receipt-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #6366F1;
+}
+
+.receipt-logo i {
+    font-size: 2rem;
+}
+
+.receipt-meta p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #6B7280;
+}
+
+.customer-info {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #F9FAFB;
+    border-radius: 6px;
+}
+
+.customer-info h5 {
+    color: #1F2937;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.customer-info p {
+    margin: 0.5rem 0;
+    color: #6B7280;
+}
+
+.order-items {
+    margin-bottom: 2rem;
+}
+
+.order-items h5 {
+    color: #1F2937;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.order-item {
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #F9FAFB;
+}
+
+.order-item-main {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+}
+
+.order-item-details {
+    flex: 1;
+}
+
+.order-item-details h6 {
+    color: #1F2937;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.item-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.child-info-sm {
+    font-size: 0.85rem;
+    color: #6B7280;
+}
+
+.schedule-info, .instructor-contact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #6B7280;
+    margin-bottom: 0.25rem;
+}
+
+.schedule-info i, .instructor-contact i {
+    color: #6366F1;
+    width: 14px;
+}
+
+.prof-phone {
+    color: #10B981;
+    font-weight: 500;
+}
+
+.order-item-price {
+    font-weight: 700;
+    color: #1F2937;
+    font-size: 1.1rem;
+}
+
+.order-summary {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-row.total {
+    font-size: 1.1rem;
+    padding-top: 1rem;
+    border-top: 2px solid #E5E7EB;
+}
+
+.confirmation-footer {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #E5E7EB;
+}
+
+.thank-you {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #10B981;
+    margin-bottom: 1rem;
+}
+
+.contact-note {
+    font-size: 0.9rem;
+    color: #6B7280;
+    margin: 0;
+}
+
+.confirmation-footer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    border-top: 1px solid #E5E7EB;
+    padding: 1.5rem;
+}
+
+/* Update existing session info styles */
+.session-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #6B7280;
+    margin-bottom: 0.3rem;
+}
+
+.session-info i {
+    font-size: 0.9rem;
+    color: #9CA3AF;
+    width: 14px;
+}
+
+.sessions-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #6B7280;
+    margin-bottom: 0.3rem;
+}
+
+.sessions-info i {
+    font-size: 0.9rem;
+    color: #9CA3AF;
+    width: 14px;
+}
+
+/* Responsive updates */
+@media (max-width: 768px) {
+    .confirmation-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .approved-stamp {
+        position: static;
+        transform: none;
+        margin-top: 1rem;
+    }
+    
+    .receipt-header-confirm {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .order-item-main {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .confirmation-footer-buttons {
+        flex-direction: column;
+    }
+    
+    .item-meta {
+        justify-content: center;
+    }
+}
+
 /* Footer */
 .footer {
     background: #1F2937;

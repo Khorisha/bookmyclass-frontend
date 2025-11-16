@@ -2,7 +2,6 @@ let webstore = new Vue({
     el: "#app",
     data: {
         showCartPage: false,
-        showCheckoutForm: false,
         cartCount: 0,
         cart: [],
         currentSlide: 0,
@@ -19,7 +18,6 @@ let webstore = new Vue({
             cardNumber: "",
             expiryDate: "",
             cvv: "",
-            cardholderName: ""
         },
         checkoutErrors: {
             parentName: "",
@@ -27,8 +25,8 @@ let webstore = new Vue({
             cardNumber: "",
             expiryDate: "",
             cvv: "",
-            cardholderName: ""
         },
+        currentOrder: null,
         // Child Info Modal Data
         selectedLesson: null,
         childInfo: {
@@ -53,10 +51,10 @@ let webstore = new Vue({
                 price: 45,
                 spaces: 15,
                 initialSpaces: 15,
-                sessions: 2,
+                sessions: 8,
                 description: "Learn fundamental algebra concepts and problem-solving techniques",
                 category: "School Classes",
-                professor: "Mr. David Chen",
+                professor: ["Mr. David Chen", "23059101234"],
                 rating: 5,
                 discounted: false,
                 students: ["John Smith", "Sarah Wilson", "Mike Johnson"],
@@ -69,10 +67,10 @@ let webstore = new Vue({
                 price: 40,
                 spaces: 12,
                 initialSpaces: 12,
-                sessions: 2,
+                sessions: 8,
                 description: "Explore geometric shapes and develop logical thinking skills",
                 category: "School Classes",
-                professor: "Ms. Sarah Lee",
+                professor: ["Ms. Sarah Lee", "23059101235"],
                 rating: 4,
                 discounted: false,
                 students: ["Emma Davis", "James Brown"],
@@ -85,10 +83,10 @@ let webstore = new Vue({
                 price: 50,
                 spaces: 10,
                 initialSpaces: 10,
-                sessions: 3,
+                sessions: 12,
                 description: "Understand the laws of motion and forces in our world",
                 category: "School Classes",
-                professor: "Dr. Ahmed Hassan",
+                professor: ["Dr. Ahmed Hassan", "23059101236"],
                 rating: 5,
                 discounted: true,
                 discountPercent: 15,
@@ -104,10 +102,10 @@ let webstore = new Vue({
                 price: 55,
                 spaces: 8,
                 initialSpaces: 8,
-                sessions: 3,
+                sessions: 12,
                 description: "Discover the wonders of electricity and magnetic fields",
                 category: "School Classes",
-                professor: "Dr. Priya Sharma",
+                professor: ["Dr. Priya Sharma", "23059101237"],
                 rating: 4,
                 discounted: false,
                 students: ["Tom Wilson", "Sophie Martin"],
@@ -120,10 +118,10 @@ let webstore = new Vue({
                 price: 48,
                 spaces: 10,
                 initialSpaces: 10,
-                sessions: 2,
+                sessions: 8,
                 description: "Learn about atomic structure and chemical bonding",
                 category: "School Classes",
-                professor: "Mr. Kevin Martin",
+                professor: ["Mr. Kevin Martin", "23059101238"],
                 rating: 5,
                 discounted: true,
                 discountPercent: 20,
@@ -139,10 +137,10 @@ let webstore = new Vue({
                 price: 42,
                 spaces: 14,
                 initialSpaces: 14,
-                sessions: 2,
+                sessions: 8,
                 description: "Explore the amazing systems that make up our bodies",
                 category: "School Classes",
-                professor: "Ms. Lisa Wong",
+                professor: ["Ms. Lisa Wong", "23059101239"],
                 rating: 4,
                 discounted: false,
                 students: ["Chloe Taylor", "Thomas Brown"],
@@ -155,10 +153,10 @@ let webstore = new Vue({
                 price: 35,
                 spaces: 18,
                 initialSpaces: 18,
-                sessions: 2,
+                sessions: 8,
                 description: "Improve your English grammar and writing abilities",
                 category: "School Classes",
-                professor: "Mrs. Maria Rodriguez",
+                professor: ["Mrs. Maria Rodriguez", "23059101240"],
                 rating: 5,
                 discounted: false,
                 students: ["Isabella Rossi", "Carlos Mendez"],
@@ -171,10 +169,10 @@ let webstore = new Vue({
                 price: 38,
                 spaces: 12,
                 initialSpaces: 12,
-                sessions: 1,
+                sessions: 4,
                 description: "Journey through ancient civilizations and their cultures",
                 category: "School Classes",
-                professor: "Mr. James Wilson",
+                professor: ["Mr. James Wilson", "23059101241"],
                 rating: 4,
                 discounted: true,
                 discountPercent: 25,
@@ -190,10 +188,10 @@ let webstore = new Vue({
                 price: 36,
                 spaces: 15,
                 initialSpaces: 15,
-                sessions: 1,
+                sessions: 4,
                 description: "Learn map reading and understand global climate patterns",
                 category: "School Classes",
-                professor: "Ms. Anna Kowalski",
+                professor: ["Ms. Anna Kowalski", "23059101242"],
                 rating: 4,
                 discounted: false,
                 students: ["Sophie Dubois", "Kenji Tanaka"],
@@ -206,10 +204,10 @@ let webstore = new Vue({
                 price: 52,
                 spaces: 10,
                 initialSpaces: 10,
-                sessions: 3,
+                sessions: 12,
                 description: "Start your coding journey with basic programming concepts",
                 category: "School Classes",
-                professor: "Mr. Raj Patel",
+                professor: ["Mr. Raj Patel", "23059101243"],
                 rating: 5,
                 discounted: false,
                 students: ["John Smith", "Sarah Wilson"],
@@ -222,10 +220,10 @@ let webstore = new Vue({
                 price: 32,
                 spaces: 16,
                 initialSpaces: 16,
-                sessions: 2,
+                sessions: 8,
                 description: "Practice everyday French conversation and vocabulary",
                 category: "School Classes",
-                professor: "Madame Sophie Dubois",
+                professor: ["Madame Sophie Dubois", "23059101244"],
                 rating: 5,
                 discounted: true,
                 discountPercent: 10,
@@ -241,10 +239,10 @@ let webstore = new Vue({
                 price: 28,
                 spaces: 20,
                 initialSpaces: 20,
-                sessions: 2,
+                sessions: 8,
                 description: "Learn cool hip-hop dance moves and choreography",
                 category: "Activities",
-                professor: "Ms. Chloe Taylor",
+                professor: ["Ms. Chloe Taylor", "23059101245"],
                 rating: 5,
                 discounted: false,
                 students: ["Mike Johnson", "Anna Kowalski"],
@@ -257,10 +255,10 @@ let webstore = new Vue({
                 price: 30,
                 spaces: 15,
                 initialSpaces: 15,
-                sessions: 2,
+                sessions: 8,
                 description: "Master classical ballet techniques and positions",
                 category: "Activities",
-                professor: "Ms. Isabella Rossi",
+                professor: ["Ms. Isabella Rossi", "23059101246"],
                 rating: 4,
                 discounted: false,
                 students: ["Tom Wilson", "Sophie Martin"],
@@ -273,10 +271,10 @@ let webstore = new Vue({
                 price: 25,
                 spaces: 12,
                 initialSpaces: 12,
-                sessions: 1,
+                sessions: 4,
                 description: "Create beautiful landscapes using watercolor techniques",
                 category: "Activities",
-                professor: "Mr. Thomas Brown",
+                professor: ["Mr. Thomas Brown", "23059101247"],
                 rating: 5,
                 discounted: true,
                 discountPercent: 30,
@@ -292,10 +290,10 @@ let webstore = new Vue({
                 price: 40,
                 spaces: 8,
                 initialSpaces: 8,
-                sessions: 2,
+                sessions: 8,
                 description: "Learn basic guitar chords and play your first songs",
                 category: "Activities",
-                professor: "Mr. Carlos Mendez",
+                professor: ["Mr. Carlos Mendez", "23059101248"],
                 rating: 4,
                 discounted: false,
                 students: ["Raj Patel", "Chloe Taylor"],
@@ -308,10 +306,10 @@ let webstore = new Vue({
                 price: 32,
                 spaces: 14,
                 initialSpaces: 14,
-                sessions: 2,
+                sessions: 8,
                 description: "Develop acting skills through fun improvisation games",
                 category: "Activities",
-                professor: "Ms. Emma Watson",
+                professor: ["Ms. Emma Watson", "23059101249"],
                 rating: 5,
                 discounted: false,
                 students: ["Thomas Brown", "Isabella Rossi"],
@@ -324,10 +322,10 @@ let webstore = new Vue({
                 price: 22,
                 spaces: 25,
                 initialSpaces: 25,
-                sessions: 3,
+                sessions: 12,
                 description: "Improve football skills with professional coaching",
                 category: "Activities",
-                professor: "Coach Michael Johnson",
+                professor: ["Coach Michael Johnson", "23059101250"],
                 rating: 4,
                 discounted: false,
                 students: ["Carlos Mendez", "Kenji Tanaka"],
@@ -340,10 +338,10 @@ let webstore = new Vue({
                 price: 35,
                 spaces: 16,
                 initialSpaces: 16,
-                sessions: 2,
+                sessions: 8,
                 description: "Learn basic karate moves and self-defense techniques",
                 category: "Activities",
-                professor: "Sensei Kenji Tanaka",
+                professor: ["Sensei Kenji Tanaka", "23059101251"],
                 rating: 5,
                 discounted: true,
                 discountPercent: 15,
@@ -371,8 +369,7 @@ let webstore = new Vue({
                    this.checkoutInfo.phone.trim() !== '' &&
                    this.checkoutInfo.cardNumber.trim() !== '' &&
                    this.checkoutInfo.expiryDate.trim() !== '' &&
-                   this.checkoutInfo.cvv.trim() !== '' &&
-                   this.checkoutInfo.cardholderName.trim() !== '';
+                   this.checkoutInfo.cvv.trim() !== '';
         },
 
         discountedLessons: function () {
@@ -442,7 +439,7 @@ let webstore = new Vue({
                         lesson.subject
                             .toLowerCase()
                             .includes(this.searchQuery.toLowerCase()) ||
-                        lesson.professor
+                        lesson.professor[0]
                             .toLowerCase()
                             .includes(this.searchQuery.toLowerCase());
 
@@ -473,7 +470,7 @@ let webstore = new Vue({
                         lesson.subject
                             .toLowerCase()
                             .includes(this.searchQuery.toLowerCase()) ||
-                        lesson.professor
+                        lesson.professor[0]
                             .toLowerCase()
                             .includes(this.searchQuery.toLowerCase());
 
@@ -563,7 +560,6 @@ let webstore = new Vue({
         toggleCartPage: function() {
             this.showCartPage = !this.showCartPage;
             if (!this.showCartPage) {
-                this.showCheckoutForm = false;
                 this.resetCheckoutForm();
             }
         },
@@ -576,7 +572,6 @@ let webstore = new Vue({
                 cardNumber: "",
                 expiryDate: "",
                 cvv: "",
-                cardholderName: ""
             };
             this.checkoutErrors = {
                 parentName: "",
@@ -584,7 +579,6 @@ let webstore = new Vue({
                 cardNumber: "",
                 expiryDate: "",
                 cvv: "",
-                cardholderName: ""
             };
         },
 
@@ -597,7 +591,6 @@ let webstore = new Vue({
                 cardNumber: "",
                 expiryDate: "",
                 cvv: "",
-                cardholderName: ""
             };
 
             // Parent Name validation (letters only)
@@ -642,13 +635,6 @@ let webstore = new Vue({
             } else if (!cvvRegex.test(this.checkoutInfo.cvv)) {
                 this.checkoutErrors.cvv = "CVV must be 3 digits";
             }
-
-            // Cardholder Name validation
-            if (!this.checkoutInfo.cardholderName.trim()) {
-                this.checkoutErrors.cardholderName = "Cardholder name is required";
-            } else if (!nameRegex.test(this.checkoutInfo.cardholderName)) {
-                this.checkoutErrors.cardholderName = "Cardholder name should contain only letters";
-            }
         },
 
         // Format card number with spaces
@@ -658,6 +644,7 @@ let webstore = new Vue({
                 value = value.match(/.{1,4}/g).join(' ');
             }
             this.checkoutInfo.cardNumber = value;
+            this.validateCheckoutForm();
         },
 
         // Format expiry date
@@ -667,23 +654,67 @@ let webstore = new Vue({
                 value = value.substring(0, 2) + '/' + value.substring(2, 4);
             }
             this.checkoutInfo.expiryDate = value;
+            this.validateCheckoutForm();
+        },
+
+        // Basic encryption for card details
+        encryptCardData: function(data) {
+            // Simple character shift encryption for demonstration
+            return data.split('').map(char => {
+                if (char.match(/[0-9]/)) {
+                    return String.fromCharCode(((char.charCodeAt(0) - 48 + 5) % 10) + 48);
+                }
+                return char;
+            }).join('');
+        },
+
+        // Basic encryption for CVV (bitwise operation + math)
+        encryptCVV: function(cvv) {
+            // Convert to number and apply transformation
+            let num = parseInt(cvv);
+            // Bitwise left shift and add
+            let encrypted = ((num << 2) + 15) ^ 42;
+            return encrypted.toString();
         },
 
         // Process checkout
         processCheckout: function() {
             this.validateCheckoutForm();
             if (this.isCheckoutValid) {
-                alert('Payment successful! Your classes have been booked.');
-                console.log('Checkout completed:', this.checkoutInfo);
-                console.log('Cart items:', this.cart);
+                // Encrypt sensitive data
+                const encryptedCardData = {
+                    cardNumber: this.encryptCardData(this.checkoutInfo.cardNumber.replace(/\s/g, '')),
+                    expiryDate: this.encryptCardData(this.checkoutInfo.expiryDate),
+                    cvv: this.encryptCVV(this.checkoutInfo.cvv)
+                };
+
+                console.log('Encrypted card data:', encryptedCardData);
                 
-                // Clear cart and reset forms
-                this.cart = [];
-                this.cartCount = 0;
-                this.showCheckoutForm = false;
-                this.showCartPage = false;
-                this.resetCheckoutForm();
+                // Create order confirmation data
+                this.currentOrder = {
+                    orderId: 'BMC-' + this.generateReceiptNumber(),
+                    date: this.getCurrentDate(),
+                    parentName: this.checkoutInfo.parentName,
+                    phone: this.checkoutInfo.phone,
+                    items: [...this.cart],
+                    subtotal: this.calculateTotal(),
+                    total: this.calculateTotal()
+                };
+
+                // Show confirmation modal
+                var modal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
+                modal.show();
             }
+        },
+
+        // Close confirmation and reset
+        closeConfirmation: function() {
+            // Clear cart and reset forms
+            this.cart = [];
+            this.cartCount = 0;
+            this.showCartPage = false;
+            this.resetCheckoutForm();
+            this.currentOrder = null;
         },
 
         // Open the child info modal
@@ -861,20 +892,6 @@ let webstore = new Vue({
                 this.sortOrder = "asc";
             }
         },
-    },
-
-    // Watch for changes to format card inputs
-    watch: {
-        'checkoutInfo.cardNumber': function(newVal) {
-            if (newVal.length === 16 && !newVal.includes(' ')) {
-                this.formatCardNumber();
-            }
-        },
-        'checkoutInfo.expiryDate': function(newVal) {
-            if (newVal.length === 4 && !newVal.includes('/')) {
-                this.formatExpiryDate();
-            }
-        }
     },
 
     // Lifecycle hook to check discount status when app loads

@@ -60,7 +60,7 @@
 
                                 <div class="receipt-body">
                                     <!-- Cart Items -->
-                                    <div class="cart-items" v-if="cart.length > 0 && !showCheckoutForm">
+                                    <div class="cart-items" v-if="cart.length > 0">
                                         <h4 class="section-title">Booked Classes</h4>
                                         <div class="cart-item" v-for="(item, index) in cart" :key="index">
                                             <div class="item-main">
@@ -81,12 +81,12 @@
                                                     </div>
                                                     <div class="session-info">
                                                         <i class="fas fa-calendar-day"></i>
-                                                        <strong>Day:</strong> {{ item.selectedDay }} | 
-                                                        <strong>Sessions:</strong> {{ item.sessions }}/week
+                                                        <strong>Schedule:</strong> {{ item.selectedDay }} | 
+                                                        <strong>Total Sessions:</strong> {{ item.sessions }}
                                                     </div>
                                                     <div class="instructor-info">
                                                         <i class="fas fa-user"></i>
-                                                        <strong>Instructor:</strong> {{ getLessonById(item.lessonId).professor }}
+                                                        <strong>Instructor:</strong> {{ getLessonById(item.lessonId).professor[0] }}
                                                     </div>
                                                 </div>
                                                 <div class="item-actions">
@@ -103,7 +103,7 @@
                                     </div>
 
                                     <!-- Checkout Form -->
-                                    <div class="checkout-form" v-if="cart.length > 0 && showCheckoutForm">
+                                    <div class="checkout-form" v-if="cart.length > 0">
                                         <h4 class="section-title">Checkout Information</h4>
                                         <div class="row">
                                             <div class="col-md-6">
@@ -114,7 +114,8 @@
                                                            id="parentName" 
                                                            v-model="checkoutInfo.parentName"
                                                            :class="{ 'is-invalid': checkoutErrors.parentName }"
-                                                           placeholder="Enter parent's full name">
+                                                           placeholder="Enter parent's full name"
+                                                           @input="validateCheckoutForm">
                                                     <div class="invalid-feedback" v-if="checkoutErrors.parentName">
                                                         {{ checkoutErrors.parentName }}
                                                     </div>
@@ -128,7 +129,8 @@
                                                            id="phone" 
                                                            v-model="checkoutInfo.phone"
                                                            :class="{ 'is-invalid': checkoutErrors.phone }"
-                                                           placeholder="Enter phone number">
+                                                           placeholder="Enter phone number"
+                                                           @input="validateCheckoutForm">
                                                     <div class="invalid-feedback" v-if="checkoutErrors.phone">
                                                         {{ checkoutErrors.phone }}
                                                     </div>
@@ -136,66 +138,57 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="cardNumber" class="form-label">Card Number *</label>
-                                                    <input type="text" 
-                                                           class="form-control" 
-                                                           id="cardNumber" 
-                                                           v-model="checkoutInfo.cardNumber"
-                                                           :class="{ 'is-invalid': checkoutErrors.cardNumber }"
-                                                           placeholder="1234 5678 9012 3456"
-                                                           maxlength="19">
-                                                    <div class="invalid-feedback" v-if="checkoutErrors.cardNumber">
-                                                        {{ checkoutErrors.cardNumber }}
+                                        <div class="payment-section">
+                                            <h5 class="payment-title">
+                                                <i class="fas fa-credit-card"></i>
+                                                Payment Details
+                                            </h5>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="cardNumber" class="form-label">Card Number *</label>
+                                                        <input type="text" 
+                                                               class="form-control" 
+                                                               id="cardNumber" 
+                                                               v-model="checkoutInfo.cardNumber"
+                                                               :class="{ 'is-invalid': checkoutErrors.cardNumber }"
+                                                               placeholder="1234 5678 9012 3456"
+                                                               maxlength="19"
+                                                               @input="formatCardNumber">
+                                                        <div class="invalid-feedback" v-if="checkoutErrors.cardNumber">
+                                                            {{ checkoutErrors.cardNumber }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="expiryDate" class="form-label">Expiry Date *</label>
-                                                    <input type="text" 
-                                                           class="form-control" 
-                                                           id="expiryDate" 
-                                                           v-model="checkoutInfo.expiryDate"
-                                                           :class="{ 'is-invalid': checkoutErrors.expiryDate }"
-                                                           placeholder="MM/YY"
-                                                           maxlength="5">
-                                                    <div class="invalid-feedback" v-if="checkoutErrors.expiryDate">
-                                                        {{ checkoutErrors.expiryDate }}
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="expiryDate" class="form-label">Expiry Date *</label>
+                                                        <input type="text" 
+                                                               class="form-control" 
+                                                               id="expiryDate" 
+                                                               v-model="checkoutInfo.expiryDate"
+                                                               :class="{ 'is-invalid': checkoutErrors.expiryDate }"
+                                                               placeholder="MM/YY"
+                                                               maxlength="5"
+                                                               @input="formatExpiryDate">
+                                                        <div class="invalid-feedback" v-if="checkoutErrors.expiryDate">
+                                                            {{ checkoutErrors.expiryDate }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="cvv" class="form-label">CVV *</label>
-                                                    <input type="text" 
-                                                           class="form-control" 
-                                                           id="cvv" 
-                                                           v-model="checkoutInfo.cvv"
-                                                           :class="{ 'is-invalid': checkoutErrors.cvv }"
-                                                           placeholder="123"
-                                                           maxlength="3">
-                                                    <div class="invalid-feedback" v-if="checkoutErrors.cvv">
-                                                        {{ checkoutErrors.cvv }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="cardholderName" class="form-label">Cardholder Name *</label>
-                                                    <input type="text" 
-                                                           class="form-control" 
-                                                           id="cardholderName" 
-                                                           v-model="checkoutInfo.cardholderName"
-                                                           :class="{ 'is-invalid': checkoutErrors.cardholderName }"
-                                                           placeholder="Name as shown on card">
-                                                    <div class="invalid-feedback" v-if="checkoutErrors.cardholderName">
-                                                        {{ checkoutErrors.cardholderName }}
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="cvv" class="form-label">CVV *</label>
+                                                        <input type="password" 
+                                                               class="form-control" 
+                                                               id="cvv" 
+                                                               v-model="checkoutInfo.cvv"
+                                                               :class="{ 'is-invalid': checkoutErrors.cvv }"
+                                                               placeholder="123"
+                                                               maxlength="3">
+                                                        <div class="invalid-feedback" v-if="checkoutErrors.cvv">
+                                                            {{ checkoutErrors.cvv }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -227,18 +220,11 @@
                                 <!-- Receipt Footer -->
                                 <div class="receipt-footer" v-if="cart.length > 0">
                                     <div class="checkout-actions">
-                                        <button class="btn btn-secondary" @click="showCheckoutForm ? showCheckoutForm = false : showCartPage = false">
+                                        <button class="btn btn-secondary" @click="showCartPage = false">
                                             <i class="fas fa-arrow-left"></i>
-                                            {{ showCheckoutForm ? 'Back to Cart' : 'Continue Shopping' }}
+                                            Continue Shopping
                                         </button>
                                         <button class="btn btn-success checkout-btn" 
-                                                v-if="!showCheckoutForm"
-                                                @click="showCheckoutForm = true">
-                                            <i class="fas fa-credit-card"></i>
-                                            Proceed to Checkout
-                                        </button>
-                                        <button class="btn btn-success checkout-btn" 
-                                                v-else
                                                 @click="processCheckout"
                                                 :disabled="!isCheckoutValid">
                                             <i class="fas fa-lock"></i>
@@ -400,15 +386,15 @@
                                                     <p>{{ lesson.description }}</p>
                                                     <div class="instructor">
                                                         <i class="fas fa-user"></i>
-                                                        {{ lesson.professor }}
+                                                        {{ lesson.professor[0] }}
                                                     </div>
                                                     <div class="location">
                                                         <i class="fas fa-map-marker-alt"></i>
                                                         {{ getLocationDisplay(lesson.location) }}
                                                     </div>
                                                     <div class="sessions-info">
-                                                        <i class="fas fa-calendar"></i>
-                                                        {{ lesson.sessions }} sessions per week
+                                                        <i class="fas fa-calendar-check"></i>
+                                                        <strong>Program Duration:</strong> {{ lesson.sessions }} sessions
                                                     </div>
                                                 </div>
                                                 
@@ -481,15 +467,15 @@
                                                 <p>{{ lesson.description }}</p>
                                                 <div class="instructor">
                                                     <i class="fas fa-user"></i>
-                                                    {{ lesson.professor }}
+                                                    {{ lesson.professor[0] }}
                                                 </div>
                                                 <div class="location">
                                                     <i class="fas fa-map-marker-alt"></i>
                                                     {{ getLocationDisplay(lesson.location) }}
                                                 </div>
                                                 <div class="sessions-info">
-                                                    <i class="fas fa-calendar"></i>
-                                                    {{ lesson.sessions }} sessions per week
+                                                    <i class="fas fa-calendar-check"></i>
+                                                    <strong>Program Duration:</strong> {{ lesson.sessions }} sessions
                                                 </div>
                                             </div>
                                             
@@ -596,7 +582,7 @@
                         <div class="lesson-info">
                             <h6>Lesson Details:</h6>
                             <p><strong>{{ selectedLesson?.title }}</strong></p>
-                            <p><strong>Sessions:</strong> {{ selectedLesson?.sessions }} per week</p>
+                            <p><strong>Total Sessions:</strong> {{ selectedLesson?.sessions }}</p>
                             <p><strong>Price:</strong> Rs {{ selectedLesson?.discounted ? calculateDiscountedPrice(selectedLesson) : selectedLesson?.price }}</p>
                         </div>
                     </div>
@@ -604,6 +590,88 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary" @click="confirmAddToCart" :disabled="!isChildInfoValid">
                             Confirm & Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Confirmation Modal -->
+        <div class="modal fade" id="orderConfirmationModal" tabindex="-1" aria-labelledby="orderConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content confirmation-modal">
+                    <div class="modal-header confirmation-header">
+                        <div class="confirmation-title">
+                            <i class="fas fa-check-circle"></i>
+                            <h3 class="modal-title" id="orderConfirmationModalLabel">Booking Confirmed!</h3>
+                        </div>
+                        <div class="approved-stamp">
+                            <span>APPROVED</span>
+                        </div>
+                    </div>
+                    <div class="modal-body confirmation-body">
+                        <div class="confirmation-receipt">
+                            <div class="receipt-header-confirm">
+                                <div class="receipt-logo">
+                                    <i class="fas fa-book"></i>
+                                    <span>BookMyClass</span>
+                                </div>
+                                <div class="receipt-meta">
+                                    <p><strong>Order ID:</strong> {{ currentOrder?.orderId }}</p>
+                                    <p><strong>Date:</strong> {{ currentOrder?.date }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="customer-info">
+                                <h5>Customer Information</h5>
+                                <p><strong>Parent:</strong> {{ currentOrder?.parentName }}</p>
+                                <p><strong>Phone:</strong> {{ currentOrder?.phone }}</p>
+                            </div>
+                            
+                            <div class="order-items">
+                                <h5>Booked Classes</h5>
+                                <div class="order-item" v-for="(item, index) in currentOrder?.items" :key="index">
+                                    <div class="order-item-main">
+                                        <div class="order-item-details">
+                                            <h6>{{ item.lessonTitle }}</h6>
+                                            <p class="item-meta">
+                                                <span class="subject-badge">{{ getLessonById(item.lessonId).subject }}</span>
+                                                <span class="child-info-sm">For: {{ item.childName }} (Age: {{ item.childAge }})</span>
+                                            </p>
+                                            <p class="schedule-info">
+                                                <i class="fas fa-calendar-day"></i>
+                                                <strong>Schedule:</strong> {{ item.selectedDay }} | 
+                                                <strong>Sessions:</strong> {{ item.sessions }}
+                                            </p>
+                                            <p class="instructor-contact">
+                                                <i class="fas fa-chalkboard-teacher"></i>
+                                                <strong>Instructor:</strong> {{ getLessonById(item.lessonId).professor[0] }} 
+                                                <span class="prof-phone">({{ getLessonById(item.lessonId).professor[1] }})</span>
+                                            </p>
+                                        </div>
+                                        <div class="order-item-price">
+                                            Rs {{ item.price }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="order-summary">
+                                <div class="summary-row total">
+                                    <span><strong>Total Paid:</strong></span>
+                                    <span><strong>Rs {{ currentOrder?.total }}</strong></span>
+                                </div>
+                            </div>
+                            
+                            <div class="confirmation-footer">
+                                <p class="thank-you">Thank you for your booking!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer confirmation-footer-buttons">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="closeConfirmation">
+                            <i class="fas fa-home"></i>
+                            Back to Home
                         </button>
                     </div>
                 </div>
