@@ -726,6 +726,146 @@ body {
     gap: 0.8rem;
 }
 
+/* Sessions Info */
+.sessions-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #6B7280;
+    margin-bottom: 0.3rem;
+}
+
+.sessions-info i {
+    font-size: 0.9rem;
+    color: #9CA3AF;
+    width: 14px;
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background: #6366F1;
+    color: white;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 1.2rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #E5E7EB;
+    padding: 1rem 1.5rem;
+}
+
+/* Days Selection */
+.days-selection {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.day-btn {
+    background: #F9FAFB;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    padding: 0.6rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #6B7280;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.day-btn:hover {
+    border-color: #6366F1;
+    color: #6366F1;
+}
+
+.day-btn.active {
+    background: #6366F1;
+    border-color: #6366F1;
+    color: white;
+}
+
+/* Lesson Info in Modal */
+.lesson-info {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.lesson-info h6 {
+    color: #1F2937;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.lesson-info p {
+    margin: 0.3rem 0;
+    font-size: 0.9rem;
+    color: #6B7280;
+}
+
+.lesson-info strong {
+    color: #1F2937;
+}
+
+/* Form Controls */
+.form-label {
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+}
+
+.form-control:focus {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+/* Modal Buttons */
+.modal-footer .btn {
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+}
+
+.modal-footer .btn-primary {
+    background: #6366F1;
+    border: none;
+}
+
+.modal-footer .btn-primary:hover:not(:disabled) {
+    background: #4F46E5;
+}
+
+.modal-footer .btn-primary:disabled {
+    background: #9CA3AF;
+    border-color: #9CA3AF;
+}
+
 /* Footer */
 .footer {
     background: #1F2937;
@@ -789,6 +929,7 @@ body {
 .social-link:hover {
     color: #6366F1;
 }
+
 
 .footer-bottom {
     text-align: center;
