@@ -19,6 +19,15 @@
                         <i class="fas fa-book me-2"></i>
                         <span>BookMyClass</span>
                     </div>
+                    <div class="header-search">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" 
+                                   class="form-control search-box" 
+                                   placeholder="Search by title, subject, or professor..."
+                                   v-model="searchQuery">
+                        </div>
+                    </div>
                     <div class="header-icons">
                         <button class="btn receipt-btn">
                             <i class="fas fa-file-invoice"></i>
@@ -40,25 +49,98 @@
                     <aside class="col-md-3 sidebar">
                         <div class="sidebar-content">
                             <h6>FILTERS</h6>
+                            
+                            <!-- Category Filter -->
                             <div class="filter-group">
-                                <input type="text" class="form-control search-box" placeholder="Search...">
+                                <label class="filter-label">Category</label>
+                                <div class="category-buttons">
+                                    <button class="category-btn" 
+                                            :class="{ active: selectedCategory === 'All' }"
+                                            @click="selectedCategory = 'All'">
+                                        All
+                                    </button>
+                                    <button class="category-btn" 
+                                            :class="{ active: selectedCategory === 'School Classes' }"
+                                            @click="selectedCategory = 'School Classes'">
+                                        School Classes
+                                    </button>
+                                    <button class="category-btn" 
+                                            :class="{ active: selectedCategory === 'Activities' }"
+                                            @click="selectedCategory = 'Activities'">
+                                        Activities
+                                    </button>
+                                </div>
                             </div>
+
+                            <div class="filter-divider"></div>
+
+                            <!-- Price Range Filter -->
                             <div class="filter-group">
-                                <label>Category</label>
-                                <select class="form-select">
-                                    <option>All Categories</option>
-                                    <option>School Classes</option>
-                                    <option>Activities</option>
-                                </select>
+                                <label class="filter-label">Price Range</label>
+                                <div class="price-range-container">
+                                    <div class="price-display">
+                                        <span class="price-min">Rs {{ priceRange[0] }}</span>
+                                        <span class="price-separator">-</span>
+                                        <span class="price-max">Rs {{ priceRange[1] }}</span>
+                                    </div>
+                                    <div class="price-slider-container">
+                                        <input type="range" 
+                                               class="form-range price-slider" 
+                                               min="20" 
+                                               max="60" 
+                                               step="5"
+                                               v-model="priceRange[0]"
+                                               @input="updatePriceRange">
+                                        <input type="range" 
+                                               class="form-range price-slider" 
+                                               min="20" 
+                                               max="60" 
+                                               step="5"
+                                               v-model="priceRange[1]"
+                                               @input="updatePriceRange">
+                                    </div>
+                                </div>
                             </div>
+
+                            <div class="filter-divider"></div>
+
+                            <!-- Sort Options -->
                             <div class="filter-group">
-                                <label>Sort by</label>
-                                <select class="form-select">
-                                    <option>Subject</option>
-                                    <option>Location</option>
-                                    <option>Price</option>
-                                    <option>Spaces</option>
+                                <div class="sort-container">
+                                    <div class="sort-select">
+                                        <label class="filter-label">Sort By</label>
+                                        <select class="form-select" v-model="sortBy">
+                                            <option value="subject">Subject</option>
+                                            <option value="location">Location</option>
+                                            <option value="price">Price</option>
+                                            <option value="spaces">Spaces</option>
+                                        </select>
+                                    </div>
+                                    <div class="sort-order">
+                                        <label class="filter-label">Order</label>
+                                        <button class="order-btn" 
+                                                @click="toggleSortOrder"
+                                                :class="{ active: sortOrder === 'asc' }">
+                                            <i class="fas" :class="sortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down'"></i>
+                                            {{ sortOrder === 'asc' ? 'Asc' : 'Desc' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- User Region for Location Sorting -->
+                            <div class="filter-group" v-if="sortBy === 'location'">
+                                <div class="filter-divider"></div>
+                                <label class="filter-label">Your Region (for sorting)</label>
+                                <select class="form-select" v-model="userRegion">
+                                    <option value="">Select your region</option>
+                                    <option value="North">North</option>
+                                    <option value="South">South</option>
+                                    <option value="East">East</option>
+                                    <option value="West">West</option>
+                                    <option value="Central">Central</option>
                                 </select>
+                                <small class="region-help">Select your region to sort by distance</small>
                             </div>
                         </div>
                     </aside>
@@ -81,25 +163,28 @@
                         <!-- Discounts -->
                         <div class="mb-4">
                             <h6 class="section-title">SPECIAL OFFERS</h6>
-                            <div class="discount-carousel" v-if="discountedLessons.length > 0">
+                            <div class="discount-carousel" v-if="filteredDiscountedLessons.length > 0">
                                 <div class="carousel-container">
                                     <div class="carousel-track" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
-                                        <div class="carousel-slide" v-for="(lesson, index) in discountedLessons" :key="lesson.id">
-                                            <div class="discount-card">
+                                        <div class="carousel-slide" v-for="(lesson, index) in filteredDiscountedLessons" :key="lesson.id">
+                                            <div class="discount-card discount-highlight">
                                                 <div class="offer-tags">
                                                     <div class="discount-tag">
                                                         {{ lesson.discountPercent }}% OFF
                                                     </div>
-                                                    <div class="time-tag" :class="getUrgencyClass(lesson.daysLeft)">
+                                                    <div class="time-tag" :class="getUrgencyClass(lesson)">
                                                         {{ getDaysText(lesson.daysLeft) }}
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="card-top">
-                                                    <i :class="['fas', lesson.icon]"></i>
+                                                    <div class="subject-image">
+                                                        <img :src="'assets/' + lesson.subject.toLowerCase() + '.png'" :alt="lesson.subject" class="img-fluid">
+                                                    </div>
                                                     <div class="card-title">
                                                         <h5>{{ lesson.title }}</h5>
                                                         <span class="subject">{{ lesson.subject }}</span>
+                                                        <span class="region-tag">{{ extractRegion(lesson.location) }}</span>
                                                     </div>
                                                 </div>
                                                 
@@ -111,7 +196,7 @@
                                                     </div>
                                                     <div class="location">
                                                         <i class="fas fa-map-marker-alt"></i>
-                                                        {{ lesson.location }}
+                                                        {{ getLocationDisplay(lesson.location) }}
                                                     </div>
                                                 </div>
                                                 
@@ -121,7 +206,7 @@
                                                         <span class="new-price">Rs {{ calculateDiscountedPrice(lesson) }}</span>
                                                     </div>
                                                     <div class="spaces-info">
-                                                        <span class="spaces-text" :class="{ 'few-spaces': lesson.spaces < 5 }">
+                                                        <span class="spaces-text" :class="getSpacesUrgencyClass(lesson)">
                                                             {{ lesson.spaces }} spaces available
                                                         </span>
                                                     </div>
@@ -139,13 +224,13 @@
                                     <button class="carousel-nav prev" @click="prevSlide" :disabled="currentSlide === 0">
                                         <i class="fas fa-chevron-left"></i>
                                     </button>
-                                    <button class="carousel-nav next" @click="nextSlide" :disabled="currentSlide >= discountedLessons.length - 1">
+                                    <button class="carousel-nav next" @click="nextSlide" :disabled="currentSlide >= filteredDiscountedLessons.length - 1">
                                         <i class="fas fa-chevron-right"></i>
                                     </button>
                                 </div>
                                 
                                 <div class="carousel-dots">
-                                    <span v-for="(lesson, index) in discountedLessons" 
+                                    <span v-for="(lesson, index) in filteredDiscountedLessons" 
                                           :key="index"
                                           class="dot"
                                           :class="{ active: currentSlide === index }"
@@ -163,13 +248,16 @@
                             <h6 class="section-title">ALL CLASSES</h6>
                             <div class="classes-grid">
                                 <div class="row">
-                                    <div class="col-md-6 col-lg-4 mb-4" v-for="lesson in lessons" :key="lesson.id">
+                                    <div class="col-md-6 col-lg-4 mb-4" v-for="lesson in filteredLessons" :key="lesson.id">
                                         <div class="class-card">
                                             <div class="card-top">
-                                                <i :class="['fas', lesson.icon]"></i>
+                                                <div class="subject-image">
+                                                    <img :src="'assets/' + lesson.subject.toLowerCase() + '.png'" :alt="lesson.subject" class="img-fluid">
+                                                </div>
                                                 <div class="card-title">
                                                     <h5>{{ lesson.title }}</h5>
                                                     <span class="subject">{{ lesson.subject }}</span>
+                                                    <span class="region-tag">{{ extractRegion(lesson.location) }}</span>
                                                 </div>
                                                 <div class="rating">
                                                     <i class="fas fa-star" v-for="n in lesson.rating" :key="n"></i>
@@ -185,14 +273,20 @@
                                                 </div>
                                                 <div class="location">
                                                     <i class="fas fa-map-marker-alt"></i>
-                                                    {{ lesson.location }}
+                                                    {{ getLocationDisplay(lesson.location) }}
                                                 </div>
                                             </div>
                                             
                                             <div class="card-bottom">
-                                                <div class="price">Rs {{ lesson.price }}</div>
+                                                <div class="price-info">
+                                                    <div v-if="lesson.discounted" class="discounted-price">
+                                                        <span class="old-price">Rs {{ lesson.price }}</span>
+                                                        <span class="new-price">Rs {{ calculateDiscountedPrice(lesson) }}</span>
+                                                    </div>
+                                                    <span v-else class="price">Rs {{ lesson.price }}</span>
+                                                </div>
                                                 <div class="spaces-info">
-                                                    <span class="spaces-text" :class="{ 'few-spaces': lesson.spaces < 5 }">
+                                                    <span class="spaces-text" :class="getSpacesUrgencyClass(lesson)">
                                                         {{ lesson.spaces }} spaces available
                                                     </span>
                                                 </div>
