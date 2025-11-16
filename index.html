@@ -29,13 +29,10 @@
                         </div>
                     </div>
                     <div class="header-icons">
-                        <button class="btn receipt-btn" @click="toggleCartPage" :class="{ active: showCartPage }">
-                            <i class="fas" :class="showCartPage ? 'fa-store' : 'fa-file-invoice'"></i>
-                            {{ showCartPage ? 'Back to Store' : 'View Receipt' }}
-                        </button>
                         <button class="btn cart-btn" :class="{ 'disabled': cartCount === 0 }" @click="toggleCartPage">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="cart-badge" v-if="cartCount > 0">{{ cartCount }}</span>
+                            {{ showCartPage ? 'Back to Store' : 'View Cart' }}
                         </button>
                     </div>
                 </div>
@@ -52,18 +49,18 @@
                             <div class="receipt-container">
                                 <div class="receipt-header">
                                     <div class="receipt-title">
-                                        <i class="fas fa-file-invoice-dollar"></i>
-                                        <h2>Booking Receipt</h2>
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <h2>Booking Cart</h2>
                                     </div>
                                     <div class="receipt-info">
-                                        <p><strong>Receipt #:</strong> BMC-{{ generateReceiptNumber() }}</p>
+                                        <p><strong>Order #:</strong> BMC-{{ generateReceiptNumber() }}</p>
                                         <p><strong>Date:</strong> {{ getCurrentDate() }}</p>
                                     </div>
                                 </div>
 
                                 <div class="receipt-body">
                                     <!-- Cart Items -->
-                                    <div class="cart-items" v-if="cart.length > 0">
+                                    <div class="cart-items" v-if="cart.length > 0 && !showCheckoutForm">
                                         <h4 class="section-title">Booked Classes</h4>
                                         <div class="cart-item" v-for="(item, index) in cart" :key="index">
                                             <div class="item-main">
@@ -105,8 +102,108 @@
                                         </div>
                                     </div>
 
+                                    <!-- Checkout Form -->
+                                    <div class="checkout-form" v-if="cart.length > 0 && showCheckoutForm">
+                                        <h4 class="section-title">Checkout Information</h4>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="parentName" class="form-label">Parent's Full Name *</label>
+                                                    <input type="text" 
+                                                           class="form-control" 
+                                                           id="parentName" 
+                                                           v-model="checkoutInfo.parentName"
+                                                           :class="{ 'is-invalid': checkoutErrors.parentName }"
+                                                           placeholder="Enter parent's full name">
+                                                    <div class="invalid-feedback" v-if="checkoutErrors.parentName">
+                                                        {{ checkoutErrors.parentName }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="phone" class="form-label">Phone Number *</label>
+                                                    <input type="text" 
+                                                           class="form-control" 
+                                                           id="phone" 
+                                                           v-model="checkoutInfo.phone"
+                                                           :class="{ 'is-invalid': checkoutErrors.phone }"
+                                                           placeholder="Enter phone number">
+                                                    <div class="invalid-feedback" v-if="checkoutErrors.phone">
+                                                        {{ checkoutErrors.phone }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mt-3">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="cardNumber" class="form-label">Card Number *</label>
+                                                    <input type="text" 
+                                                           class="form-control" 
+                                                           id="cardNumber" 
+                                                           v-model="checkoutInfo.cardNumber"
+                                                           :class="{ 'is-invalid': checkoutErrors.cardNumber }"
+                                                           placeholder="1234 5678 9012 3456"
+                                                           maxlength="19">
+                                                    <div class="invalid-feedback" v-if="checkoutErrors.cardNumber">
+                                                        {{ checkoutErrors.cardNumber }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="expiryDate" class="form-label">Expiry Date *</label>
+                                                    <input type="text" 
+                                                           class="form-control" 
+                                                           id="expiryDate" 
+                                                           v-model="checkoutInfo.expiryDate"
+                                                           :class="{ 'is-invalid': checkoutErrors.expiryDate }"
+                                                           placeholder="MM/YY"
+                                                           maxlength="5">
+                                                    <div class="invalid-feedback" v-if="checkoutErrors.expiryDate">
+                                                        {{ checkoutErrors.expiryDate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="cvv" class="form-label">CVV *</label>
+                                                    <input type="text" 
+                                                           class="form-control" 
+                                                           id="cvv" 
+                                                           v-model="checkoutInfo.cvv"
+                                                           :class="{ 'is-invalid': checkoutErrors.cvv }"
+                                                           placeholder="123"
+                                                           maxlength="3">
+                                                    <div class="invalid-feedback" v-if="checkoutErrors.cvv">
+                                                        {{ checkoutErrors.cvv }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-3">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="cardholderName" class="form-label">Cardholder Name *</label>
+                                                    <input type="text" 
+                                                           class="form-control" 
+                                                           id="cardholderName" 
+                                                           v-model="checkoutInfo.cardholderName"
+                                                           :class="{ 'is-invalid': checkoutErrors.cardholderName }"
+                                                           placeholder="Name as shown on card">
+                                                    <div class="invalid-feedback" v-if="checkoutErrors.cardholderName">
+                                                        {{ checkoutErrors.cardholderName }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!-- Empty Cart Message -->
-                                    <div v-else class="empty-cart">
+                                    <div v-else-if="cart.length === 0" class="empty-cart">
                                         <div class="empty-cart-icon">
                                             <i class="fas fa-shopping-cart"></i>
                                         </div>
@@ -120,14 +217,6 @@
 
                                     <!-- Receipt Summary -->
                                     <div class="receipt-summary" v-if="cart.length > 0">
-                                        <div class="summary-row">
-                                            <span>Subtotal:</span>
-                                            <span>Rs {{ calculateSubtotal() }}</span>
-                                        </div>
-                                        <div class="summary-row">
-                                            <span>Service Fee:</span>
-                                            <span>Rs {{ serviceFee }}</span>
-                                        </div>
                                         <div class="summary-row total">
                                             <span><strong>Total Amount:</strong></span>
                                             <span><strong>Rs {{ calculateTotal() }}</strong></span>
@@ -138,17 +227,23 @@
                                 <!-- Receipt Footer -->
                                 <div class="receipt-footer" v-if="cart.length > 0">
                                     <div class="checkout-actions">
-                                        <button class="btn btn-secondary" @click="showCartPage = false">
+                                        <button class="btn btn-secondary" @click="showCheckoutForm ? showCheckoutForm = false : showCartPage = false">
                                             <i class="fas fa-arrow-left"></i>
-                                            Continue Shopping
+                                            {{ showCheckoutForm ? 'Back to Cart' : 'Continue Shopping' }}
                                         </button>
-                                        <button class="btn btn-success checkout-btn" @click="checkout">
+                                        <button class="btn btn-success checkout-btn" 
+                                                v-if="!showCheckoutForm"
+                                                @click="showCheckoutForm = true">
                                             <i class="fas fa-credit-card"></i>
                                             Proceed to Checkout
                                         </button>
-                                    </div>
-                                    <div class="receipt-notes">
-                                        <p><strong>Note:</strong> All bookings are subject to availability. Changes can be made up to 24 hours before the session.</p>
+                                        <button class="btn btn-success checkout-btn" 
+                                                v-else
+                                                @click="processCheckout"
+                                                :disabled="!isCheckoutValid">
+                                            <i class="fas fa-lock"></i>
+                                            Complete Payment
+                                        </button>
                                     </div>
                                 </div>
                             </div>

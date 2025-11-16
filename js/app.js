@@ -2,6 +2,7 @@ let webstore = new Vue({
     el: "#app",
     data: {
         showCartPage: false,
+        showCheckoutForm: false,
         cartCount: 0,
         cart: [],
         currentSlide: 0,
@@ -11,7 +12,23 @@ let webstore = new Vue({
         sortOrder: "asc",
         searchQuery: "",
         userRegion: "",
-        serviceFee: 5,
+        // Checkout Information
+        checkoutInfo: {
+            parentName: "",
+            phone: "",
+            cardNumber: "",
+            expiryDate: "",
+            cvv: "",
+            cardholderName: ""
+        },
+        checkoutErrors: {
+            parentName: "",
+            phone: "",
+            cardNumber: "",
+            expiryDate: "",
+            cvv: "",
+            cardholderName: ""
+        },
         // Child Info Modal Data
         selectedLesson: null,
         childInfo: {
@@ -346,6 +363,18 @@ let webstore = new Vue({
                    this.childInfo.selectedDay !== '';
         },
 
+        // Check if checkout form is valid
+        isCheckoutValid: function() {
+            this.validateCheckoutForm();
+            return !Object.values(this.checkoutErrors).some(error => error !== '') &&
+                   this.checkoutInfo.parentName.trim() !== '' &&
+                   this.checkoutInfo.phone.trim() !== '' &&
+                   this.checkoutInfo.cardNumber.trim() !== '' &&
+                   this.checkoutInfo.expiryDate.trim() !== '' &&
+                   this.checkoutInfo.cvv.trim() !== '' &&
+                   this.checkoutInfo.cardholderName.trim() !== '';
+        },
+
         discountedLessons: function () {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -533,6 +562,128 @@ let webstore = new Vue({
         // Toggle between store and cart page
         toggleCartPage: function() {
             this.showCartPage = !this.showCartPage;
+            if (!this.showCartPage) {
+                this.showCheckoutForm = false;
+                this.resetCheckoutForm();
+            }
+        },
+
+        // Reset checkout form
+        resetCheckoutForm: function() {
+            this.checkoutInfo = {
+                parentName: "",
+                phone: "",
+                cardNumber: "",
+                expiryDate: "",
+                cvv: "",
+                cardholderName: ""
+            };
+            this.checkoutErrors = {
+                parentName: "",
+                phone: "",
+                cardNumber: "",
+                expiryDate: "",
+                cvv: "",
+                cardholderName: ""
+            };
+        },
+
+        // Validate checkout form
+        validateCheckoutForm: function() {
+            // Reset errors
+            this.checkoutErrors = {
+                parentName: "",
+                phone: "",
+                cardNumber: "",
+                expiryDate: "",
+                cvv: "",
+                cardholderName: ""
+            };
+
+            // Parent Name validation (letters only)
+            const nameRegex = /^[A-Za-z\s]+$/;
+            if (!this.checkoutInfo.parentName.trim()) {
+                this.checkoutErrors.parentName = "Parent name is required";
+            } else if (!nameRegex.test(this.checkoutInfo.parentName)) {
+                this.checkoutErrors.parentName = "Parent name should contain only letters";
+            }
+
+            // Phone validation (numbers only)
+            const phoneRegex = /^\d+$/;
+            if (!this.checkoutInfo.phone.trim()) {
+                this.checkoutErrors.phone = "Phone number is required";
+            } else if (!phoneRegex.test(this.checkoutInfo.phone)) {
+                this.checkoutErrors.phone = "Phone number should contain only numbers";
+            } else if (this.checkoutInfo.phone.length < 7) {
+                this.checkoutErrors.phone = "Phone number is too short";
+            }
+
+            // Card Number validation
+            const cardRegex = /^\d{16}$/;
+            const cleanCardNumber = this.checkoutInfo.cardNumber.replace(/\s/g, '');
+            if (!cleanCardNumber) {
+                this.checkoutErrors.cardNumber = "Card number is required";
+            } else if (!cardRegex.test(cleanCardNumber)) {
+                this.checkoutErrors.cardNumber = "Card number must be 16 digits";
+            }
+
+            // Expiry Date validation
+            const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+            if (!this.checkoutInfo.expiryDate.trim()) {
+                this.checkoutErrors.expiryDate = "Expiry date is required";
+            } else if (!expiryRegex.test(this.checkoutInfo.expiryDate)) {
+                this.checkoutErrors.expiryDate = "Format must be MM/YY";
+            }
+
+            // CVV validation
+            const cvvRegex = /^\d{3}$/;
+            if (!this.checkoutInfo.cvv.trim()) {
+                this.checkoutErrors.cvv = "CVV is required";
+            } else if (!cvvRegex.test(this.checkoutInfo.cvv)) {
+                this.checkoutErrors.cvv = "CVV must be 3 digits";
+            }
+
+            // Cardholder Name validation
+            if (!this.checkoutInfo.cardholderName.trim()) {
+                this.checkoutErrors.cardholderName = "Cardholder name is required";
+            } else if (!nameRegex.test(this.checkoutInfo.cardholderName)) {
+                this.checkoutErrors.cardholderName = "Cardholder name should contain only letters";
+            }
+        },
+
+        // Format card number with spaces
+        formatCardNumber: function() {
+            let value = this.checkoutInfo.cardNumber.replace(/\s/g, '');
+            if (value.length > 0) {
+                value = value.match(/.{1,4}/g).join(' ');
+            }
+            this.checkoutInfo.cardNumber = value;
+        },
+
+        // Format expiry date
+        formatExpiryDate: function() {
+            let value = this.checkoutInfo.expiryDate.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            this.checkoutInfo.expiryDate = value;
+        },
+
+        // Process checkout
+        processCheckout: function() {
+            this.validateCheckoutForm();
+            if (this.isCheckoutValid) {
+                alert('Payment successful! Your classes have been booked.');
+                console.log('Checkout completed:', this.checkoutInfo);
+                console.log('Cart items:', this.cart);
+                
+                // Clear cart and reset forms
+                this.cart = [];
+                this.cartCount = 0;
+                this.showCheckoutForm = false;
+                this.showCartPage = false;
+                this.resetCheckoutForm();
+            }
         },
 
         // Open the child info modal
@@ -617,14 +768,9 @@ let webstore = new Vue({
             return this.lessons.find(lesson => lesson.id === lessonId) || {};
         },
 
-        // Calculate subtotal
-        calculateSubtotal: function() {
-            return this.cart.reduce((total, item) => total + item.price, 0);
-        },
-
-        // Calculate total with service fee
+        // Calculate total
         calculateTotal: function() {
-            return this.calculateSubtotal() + this.serviceFee;
+            return this.cart.reduce((total, item) => total + item.price, 0);
         },
 
         // Generate receipt number
@@ -639,20 +785,6 @@ let webstore = new Vue({
                 month: 'long',
                 day: 'numeric'
             });
-        },
-
-        // Checkout function
-        checkout: function() {
-            if (this.cart.length > 0) {
-                alert('Checkout completed! Your classes have been booked successfully.');
-                // Here you would typically send the cart data to a server
-                console.log('Checkout completed with items:', this.cart);
-                
-                // Clear cart after successful checkout
-                this.cart = [];
-                this.cartCount = 0;
-                this.showCartPage = false;
-            }
         },
 
         calculateDiscountedPrice: function (lesson) {
@@ -729,6 +861,20 @@ let webstore = new Vue({
                 this.sortOrder = "asc";
             }
         },
+    },
+
+    // Watch for changes to format card inputs
+    watch: {
+        'checkoutInfo.cardNumber': function(newVal) {
+            if (newVal.length === 16 && !newVal.includes(' ')) {
+                this.formatCardNumber();
+            }
+        },
+        'checkoutInfo.expiryDate': function(newVal) {
+            if (newVal.length === 4 && !newVal.includes('/')) {
+                this.formatExpiryDate();
+            }
+        }
     },
 
     // Lifecycle hook to check discount status when app loads
