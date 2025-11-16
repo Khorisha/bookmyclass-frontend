@@ -1,6 +1,7 @@
 let webstore = new Vue({
     el: "#app",
     data: {
+        showCartPage: false,
         cartCount: 0,
         cart: [],
         currentSlide: 0,
@@ -10,6 +11,7 @@ let webstore = new Vue({
         sortOrder: "asc",
         searchQuery: "",
         userRegion: "",
+        serviceFee: 5,
         // Child Info Modal Data
         selectedLesson: null,
         childInfo: {
@@ -528,6 +530,11 @@ let webstore = new Vue({
         },
     },
     methods: {
+        // Toggle between store and cart page
+        toggleCartPage: function() {
+            this.showCartPage = !this.showCartPage;
+        },
+
         // Open the child info modal
         openChildModal: function (lesson) {
             if (lesson.spaces > 0) {
@@ -581,6 +588,73 @@ let webstore = new Vue({
             }
         },
 
+        // Remove item from cart
+        removeFromCart: function(index) {
+            const item = this.cart[index];
+            
+            // Find the lesson and restore the space
+            const lesson = this.getLessonById(item.lessonId);
+            if (lesson) {
+                lesson.spaces++;
+                
+                // Remove child name from lesson's students array
+                const studentIndex = lesson.students.indexOf(item.childName);
+                if (studentIndex > -1) {
+                    lesson.students.splice(studentIndex, 1);
+                }
+            }
+            
+            // Remove from cart
+            this.cart.splice(index, 1);
+            this.cartCount--;
+            
+            console.log("Removed from cart:", item.lessonTitle);
+            console.log("Spaces restored for:", lesson.title, "New spaces:", lesson.spaces);
+        },
+
+        // Get lesson by ID
+        getLessonById: function(lessonId) {
+            return this.lessons.find(lesson => lesson.id === lessonId) || {};
+        },
+
+        // Calculate subtotal
+        calculateSubtotal: function() {
+            return this.cart.reduce((total, item) => total + item.price, 0);
+        },
+
+        // Calculate total with service fee
+        calculateTotal: function() {
+            return this.calculateSubtotal() + this.serviceFee;
+        },
+
+        // Generate receipt number
+        generateReceiptNumber: function() {
+            return Math.random().toString(36).substr(2, 9).toUpperCase();
+        },
+
+        // Get current date
+        getCurrentDate: function() {
+            return new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        },
+
+        // Checkout function
+        checkout: function() {
+            if (this.cart.length > 0) {
+                alert('Checkout completed! Your classes have been booked successfully.');
+                // Here you would typically send the cart data to a server
+                console.log('Checkout completed with items:', this.cart);
+                
+                // Clear cart after successful checkout
+                this.cart = [];
+                this.cartCount = 0;
+                this.showCartPage = false;
+            }
+        },
+
         calculateDiscountedPrice: function (lesson) {
             return Math.round(lesson.price * (1 - lesson.discountPercent / 100));
         },
@@ -605,18 +679,6 @@ let webstore = new Vue({
             );
             const daysLeft = lesson.daysLeft;
             const percentageLeft = (daysLeft / totalDays) * 100;
-
-            // Debug logging to check values
-            console.log(
-                "Lesson:",
-                lesson.title,
-                "Days left:",
-                daysLeft,
-                "Total days:",
-                totalDays,
-                "Percentage:",
-                percentageLeft
-            );
 
             // Priority: Last day (0 days) should be red, then check percentage
             if (daysLeft === 0) return "red";

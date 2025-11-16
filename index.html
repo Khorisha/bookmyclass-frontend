@@ -19,7 +19,7 @@
                         <i class="fas fa-book me-2"></i>
                         <span>BookMyClass</span>
                     </div>
-                    <div class="header-search">
+                    <div class="header-search" v-if="!showCartPage">
                         <div class="search-container">
                             <i class="fas fa-search search-icon"></i>
                             <input type="text" 
@@ -29,10 +29,11 @@
                         </div>
                     </div>
                     <div class="header-icons">
-                        <button class="btn receipt-btn">
-                            <i class="fas fa-file-invoice"></i>
+                        <button class="btn receipt-btn" @click="toggleCartPage" :class="{ active: showCartPage }">
+                            <i class="fas" :class="showCartPage ? 'fa-store' : 'fa-file-invoice'"></i>
+                            {{ showCartPage ? 'Back to Store' : 'View Receipt' }}
                         </button>
-                        <button class="btn cart-btn" :class="{ 'disabled': cartCount === 0 }">
+                        <button class="btn cart-btn" :class="{ 'disabled': cartCount === 0 }" @click="toggleCartPage">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="cart-badge" v-if="cartCount > 0">{{ cartCount }}</span>
                         </button>
@@ -44,7 +45,119 @@
         <!-- Main Content -->
         <main class="main">
             <div class="container-fluid">
-                <div class="row">
+                <!-- Cart/Receipt Page -->
+                <div v-if="showCartPage" class="cart-page">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <div class="receipt-container">
+                                <div class="receipt-header">
+                                    <div class="receipt-title">
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                        <h2>Booking Receipt</h2>
+                                    </div>
+                                    <div class="receipt-info">
+                                        <p><strong>Receipt #:</strong> BMC-{{ generateReceiptNumber() }}</p>
+                                        <p><strong>Date:</strong> {{ getCurrentDate() }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="receipt-body">
+                                    <!-- Cart Items -->
+                                    <div class="cart-items" v-if="cart.length > 0">
+                                        <h4 class="section-title">Booked Classes</h4>
+                                        <div class="cart-item" v-for="(item, index) in cart" :key="index">
+                                            <div class="item-main">
+                                                <div class="item-image">
+                                                    <img :src="'assets/' + getLessonById(item.lessonId).subject.toLowerCase() + '.png'" 
+                                                         :alt="getLessonById(item.lessonId).subject"
+                                                         class="img-fluid">
+                                                </div>
+                                                <div class="item-details">
+                                                    <h5>{{ item.lessonTitle }}</h5>
+                                                    <div class="item-meta">
+                                                        <span class="subject-badge">{{ getLessonById(item.lessonId).subject }}</span>
+                                                        <span class="region-tag">{{ extractRegion(getLessonById(item.lessonId).location) }}</span>
+                                                    </div>
+                                                    <div class="child-info">
+                                                        <i class="fas fa-child"></i>
+                                                        <strong>For:</strong> {{ item.childName }} (Age: {{ item.childAge }})
+                                                    </div>
+                                                    <div class="session-info">
+                                                        <i class="fas fa-calendar-day"></i>
+                                                        <strong>Day:</strong> {{ item.selectedDay }} | 
+                                                        <strong>Sessions:</strong> {{ item.sessions }}/week
+                                                    </div>
+                                                    <div class="instructor-info">
+                                                        <i class="fas fa-user"></i>
+                                                        <strong>Instructor:</strong> {{ getLessonById(item.lessonId).professor }}
+                                                    </div>
+                                                </div>
+                                                <div class="item-actions">
+                                                    <button class="btn btn-danger btn-sm remove-btn" @click="removeFromCart(index)">
+                                                        <i class="fas fa-trash"></i>
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="item-price">
+                                                <span class="price-amount">Rs {{ item.price }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Empty Cart Message -->
+                                    <div v-else class="empty-cart">
+                                        <div class="empty-cart-icon">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </div>
+                                        <h3>Your cart is empty</h3>
+                                        <p>Browse our classes and add some lessons to get started!</p>
+                                        <button class="btn btn-primary" @click="showCartPage = false">
+                                            <i class="fas fa-store"></i>
+                                            Browse Classes
+                                        </button>
+                                    </div>
+
+                                    <!-- Receipt Summary -->
+                                    <div class="receipt-summary" v-if="cart.length > 0">
+                                        <div class="summary-row">
+                                            <span>Subtotal:</span>
+                                            <span>Rs {{ calculateSubtotal() }}</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span>Service Fee:</span>
+                                            <span>Rs {{ serviceFee }}</span>
+                                        </div>
+                                        <div class="summary-row total">
+                                            <span><strong>Total Amount:</strong></span>
+                                            <span><strong>Rs {{ calculateTotal() }}</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Receipt Footer -->
+                                <div class="receipt-footer" v-if="cart.length > 0">
+                                    <div class="checkout-actions">
+                                        <button class="btn btn-secondary" @click="showCartPage = false">
+                                            <i class="fas fa-arrow-left"></i>
+                                            Continue Shopping
+                                        </button>
+                                        <button class="btn btn-success checkout-btn" @click="checkout">
+                                            <i class="fas fa-credit-card"></i>
+                                            Proceed to Checkout
+                                        </button>
+                                    </div>
+                                    <div class="receipt-notes">
+                                        <p><strong>Note:</strong> All bookings are subject to availability. Changes can be made up to 24 hours before the session.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Store Page -->
+                <div v-else class="row">
                     <!-- Sidebar -->
                     <aside class="col-md-3 sidebar">
                         <div class="sidebar-content">
