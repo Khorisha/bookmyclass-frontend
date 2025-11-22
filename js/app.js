@@ -1,913 +1,953 @@
+// API Base URL
+const API_BASE_URL = "http://localhost:3000";
+
 let webstore = new Vue({
-    el: "#app",
-    data: {
-        showCartPage: false,
-        cartCount: 0,
-        cart: [],
-        currentSlide: 0,
-        selectedCategory: "All",
-        priceRange: [20, 60],
-        sortBy: "subject",
-        sortOrder: "asc",
-        searchQuery: "",
-        userRegion: "",
-        // Checkout Information
-        checkoutInfo: {
-            parentName: "",
-            phone: "",
-            cardNumber: "",
-            expiryDate: "",
-            cvv: "",
-        },
-        checkoutErrors: {
-            parentName: "",
-            phone: "",
-            cardNumber: "",
-            expiryDate: "",
-            cvv: "",
-        },
-        currentOrder: null,
-        // Child Info Modal Data
-        selectedLesson: null,
-        childInfo: {
-            name: "",
-            age: "",
-            selectedDay: ""
-        },
-        availableDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        regionDistances: {
-            North: { North: 0, Central: 1, East: 2, West: 2, South: 3 },
-            South: { South: 0, Central: 1, East: 2, West: 2, North: 3 },
-            Central: { Central: 0, North: 1, South: 1, East: 1, West: 1 },
-            East: { East: 0, Central: 1, North: 2, South: 2, West: 3 },
-            West: { West: 0, Central: 1, North: 2, South: 2, East: 3 },
-        },
-        lessons: [
-            {
-                id: "1",
-                subject: "Mathematics",
-                title: "Algebra Basics",
-                location: "North, Grand Baie Education Center",
-                price: 45,
-                spaces: 15,
-                initialSpaces: 15,
-                sessions: 8,
-                description: "Learn fundamental algebra concepts and problem-solving techniques",
-                category: "School Classes",
-                professor: ["Mr. David Chen", "23059101234"],
-                rating: 5,
-                discounted: false,
-                students: ["John Smith", "Sarah Wilson", "Mike Johnson"],
-            },
-            {
-                id: "2",
-                subject: "Mathematics",
-                title: "Geometry & Problem Solving",
-                location: "Central, Curepipe Learning Hub",
-                price: 40,
-                spaces: 12,
-                initialSpaces: 12,
-                sessions: 8,
-                description: "Explore geometric shapes and develop logical thinking skills",
-                category: "School Classes",
-                professor: ["Ms. Sarah Lee", "23059101235"],
-                rating: 4,
-                discounted: false,
-                students: ["Emma Davis", "James Brown"],
-            },
-            {
-                id: "3",
-                subject: "Physics",
-                title: "Forces & Motion",
-                location: "Central, Quatre Bornes Science Center",
-                price: 50,
-                spaces: 10,
-                initialSpaces: 10,
-                sessions: 12,
-                description: "Understand the laws of motion and forces in our world",
-                category: "School Classes",
-                professor: ["Dr. Ahmed Hassan", "23059101236"],
-                rating: 5,
-                discounted: true,
-                discountPercent: 15,
-                discountStart: "2025-11-15",
-                discountEnd: "2025-11-25",
-                students: ["Lisa Wong", "Kevin Martin", "Anna Kowalski"],
-            },
-            {
-                id: "4",
-                subject: "Physics",
-                title: "Electricity & Magnetism",
-                location: "Central, Rose Hill Tech Lab",
-                price: 55,
-                spaces: 8,
-                initialSpaces: 8,
-                sessions: 12,
-                description: "Discover the wonders of electricity and magnetic fields",
-                category: "School Classes",
-                professor: ["Dr. Priya Sharma", "23059101237"],
-                rating: 4,
-                discounted: false,
-                students: ["Tom Wilson", "Sophie Martin"],
-            },
-            {
-                id: "5",
-                subject: "Chemistry",
-                title: "Atoms & Molecules",
-                location: "Central, Vacoas Science Lab",
-                price: 48,
-                spaces: 10,
-                initialSpaces: 10,
-                sessions: 8,
-                description: "Learn about atomic structure and chemical bonding",
-                category: "School Classes",
-                professor: ["Mr. Kevin Martin", "23059101238"],
-                rating: 5,
-                discounted: true,
-                discountPercent: 20,
-                discountStart: "2025-11-10",
-                discountEnd: "2025-11-20",
-                students: ["David Chen", "Maria Rodriguez", "Raj Patel"],
-            },
-            {
-                id: "6",
-                subject: "Biology",
-                title: "Human Body Systems",
-                location: "Central, Phoenix Biology Lab",
-                price: 42,
-                spaces: 14,
-                initialSpaces: 14,
-                sessions: 8,
-                description: "Explore the amazing systems that make up our bodies",
-                category: "School Classes",
-                professor: ["Ms. Lisa Wong", "23059101239"],
-                rating: 4,
-                discounted: false,
-                students: ["Chloe Taylor", "Thomas Brown"],
-            },
-            {
-                id: "7",
-                subject: "English",
-                title: "Grammar & Writing Skills",
-                location: "North, Grand Baie Language Center",
-                price: 35,
-                spaces: 18,
-                initialSpaces: 18,
-                sessions: 8,
-                description: "Improve your English grammar and writing abilities",
-                category: "School Classes",
-                professor: ["Mrs. Maria Rodriguez", "23059101240"],
-                rating: 5,
-                discounted: false,
-                students: ["Isabella Rossi", "Carlos Mendez"],
-            },
-            {
-                id: "8",
-                subject: "History",
-                title: "Ancient Civilizations",
-                location: "South, Mahebourg History Room",
-                price: 38,
-                spaces: 12,
-                initialSpaces: 12,
-                sessions: 4,
-                description: "Journey through ancient civilizations and their cultures",
-                category: "School Classes",
-                professor: ["Mr. James Wilson", "23059101241"],
-                rating: 4,
-                discounted: true,
-                discountPercent: 25,
-                discountStart: "2025-11-18",
-                discountEnd: "2025-11-28",
-                students: ["Emma Watson", "Michael Johnson"],
-            },
-            {
-                id: "9",
-                subject: "Geography",
-                title: "Maps & Climate",
-                location: "North, Triolet Learning Center",
-                price: 36,
-                spaces: 15,
-                initialSpaces: 15,
-                sessions: 4,
-                description: "Learn map reading and understand global climate patterns",
-                category: "School Classes",
-                professor: ["Ms. Anna Kowalski", "23059101242"],
-                rating: 4,
-                discounted: false,
-                students: ["Sophie Dubois", "Kenji Tanaka"],
-            },
-            {
-                id: "10",
-                subject: "Computer Science",
-                title: "Coding Fundamentals",
-                location: "Central, Ebene Digital Hub",
-                price: 52,
-                spaces: 10,
-                initialSpaces: 10,
-                sessions: 12,
-                description: "Start your coding journey with basic programming concepts",
-                category: "School Classes",
-                professor: ["Mr. Raj Patel", "23059101243"],
-                rating: 5,
-                discounted: false,
-                students: ["John Smith", "Sarah Wilson"],
-            },
-            {
-                id: "11",
-                subject: "French",
-                title: "Everyday Conversation",
-                location: "Central, Curepipe Language Center",
-                price: 32,
-                spaces: 16,
-                initialSpaces: 16,
-                sessions: 8,
-                description: "Practice everyday French conversation and vocabulary",
-                category: "School Classes",
-                professor: ["Madame Sophie Dubois", "23059101244"],
-                rating: 5,
-                discounted: true,
-                discountPercent: 10,
-                discountStart: "2025-11-12",
-                discountEnd: "2025-11-22",
-                students: ["Emma Davis", "James Brown", "Lisa Wong"],
-            },
-            {
-                id: "12",
-                subject: "Dance",
-                title: "Hip-Hop Moves",
-                location: "West, Port Louis Dance Studio",
-                price: 28,
-                spaces: 20,
-                initialSpaces: 20,
-                sessions: 8,
-                description: "Learn cool hip-hop dance moves and choreography",
-                category: "Activities",
-                professor: ["Ms. Chloe Taylor", "23059101245"],
-                rating: 5,
-                discounted: false,
-                students: ["Mike Johnson", "Anna Kowalski"],
-            },
-            {
-                id: "13",
-                subject: "Dance",
-                title: "Ballet Techniques",
-                location: "Central, Quatre Bornes Dance Academy",
-                price: 30,
-                spaces: 15,
-                initialSpaces: 15,
-                sessions: 8,
-                description: "Master classical ballet techniques and positions",
-                category: "Activities",
-                professor: ["Ms. Isabella Rossi", "23059101246"],
-                rating: 4,
-                discounted: false,
-                students: ["Tom Wilson", "Sophie Martin"],
-            },
-            {
-                id: "14",
-                subject: "Painting",
-                title: "Watercolor Landscapes",
-                location: "Central, Rose Hill Art Room",
-                price: 25,
-                spaces: 12,
-                initialSpaces: 12,
-                sessions: 4,
-                description: "Create beautiful landscapes using watercolor techniques",
-                category: "Activities",
-                professor: ["Mr. Thomas Brown", "23059101247"],
-                rating: 5,
-                discounted: true,
-                discountPercent: 30,
-                discountStart: "2025-11-14",
-                discountEnd: "2025-11-24",
-                students: ["David Chen", "Maria Rodriguez"],
-            },
-            {
-                id: "15",
-                subject: "Music",
-                title: "Guitar for Beginners",
-                location: "Central, Phoenix Music Room",
-                price: 40,
-                spaces: 8,
-                initialSpaces: 8,
-                sessions: 8,
-                description: "Learn basic guitar chords and play your first songs",
-                category: "Activities",
-                professor: ["Mr. Carlos Mendez", "23059101248"],
-                rating: 4,
-                discounted: false,
-                students: ["Raj Patel", "Chloe Taylor"],
-            },
-            {
-                id: "16",
-                subject: "Drama",
-                title: "Acting & Improvisation",
-                location: "Central, Curepipe Drama Hall",
-                price: 32,
-                spaces: 14,
-                initialSpaces: 14,
-                sessions: 8,
-                description: "Develop acting skills through fun improvisation games",
-                category: "Activities",
-                professor: ["Ms. Emma Watson", "23059101249"],
-                rating: 5,
-                discounted: false,
-                students: ["Thomas Brown", "Isabella Rossi"],
-            },
-            {
-                id: "17",
-                subject: "Sports",
-                title: "Football Training",
-                location: "Central, Vacoas Sports Field",
-                price: 22,
-                spaces: 25,
-                initialSpaces: 25,
-                sessions: 12,
-                description: "Improve football skills with professional coaching",
-                category: "Activities",
-                professor: ["Coach Michael Johnson", "23059101250"],
-                rating: 4,
-                discounted: false,
-                students: ["Carlos Mendez", "Kenji Tanaka"],
-            },
-            {
-                id: "18",
-                subject: "Martial Arts",
-                title: "Karate Basics",
-                location: "North, Grand Baie Dojo",
-                price: 35,
-                spaces: 16,
-                initialSpaces: 16,
-                sessions: 8,
-                description: "Learn basic karate moves and self-defense techniques",
-                category: "Activities",
-                professor: ["Sensei Kenji Tanaka", "23059101251"],
-                rating: 5,
-                discounted: true,
-                discountPercent: 15,
-                discountStart: "2025-11-16",
-                discountEnd: "2025-11-26",
-                students: ["Sophie Dubois", "John Smith"],
-            },
-        ],
+  el: "#app",
+  data: {
+    showCartPage: false,
+    cartCount: 0,
+    cart: [],
+    currentSlide: 0,
+    selectedCategory: "All",
+    priceRange: [20, 60],
+    sortBy: "subject",
+    sortOrder: "asc",
+    searchQuery: "",
+    userRegion: "",
+    isProcessing: false,
+    searchResults: [],
+    isSearching: false,
+    searchDebounceTimer: null,
+
+    // Checkout Information
+    checkoutInfo: {
+      parentName: "",
+      phone: "",
+      cardNumber: "",
+      expiryDate: "",
+      cvv: "",
     },
-    computed: {
-        // Check if child info is valid for form submission
-        isChildInfoValid: function() {
-            return this.childInfo.name.trim() !== '' && 
-                   this.childInfo.age !== '' && 
-                   this.childInfo.age >= 5 && 
-                   this.childInfo.age <= 18 && 
-                   this.childInfo.selectedDay !== '';
-        },
-
-        // Check if checkout form is valid
-        isCheckoutValid: function() {
-            this.validateCheckoutForm();
-            return !Object.values(this.checkoutErrors).some(error => error !== '') &&
-                   this.checkoutInfo.parentName.trim() !== '' &&
-                   this.checkoutInfo.phone.trim() !== '' &&
-                   this.checkoutInfo.cardNumber.trim() !== '' &&
-                   this.checkoutInfo.expiryDate.trim() !== '' &&
-                   this.checkoutInfo.cvv.trim() !== '';
-        },
-
-        discountedLessons: function () {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            // First, update discounted status for all lessons
-            this.lessons.forEach(function (lesson) {
-                if (lesson.discounted) {
-                    const discountEnd = new Date(lesson.discountEnd);
-                    discountEnd.setHours(23, 59, 59, 999);
-
-                    if (discountEnd < today) {
-                        lesson.discounted = false;
-                    }
-                }
-            });
-
-            const discountedLessons = this.lessons.filter(function (lesson) {
-                if (!lesson.discounted) {
-                    return false;
-                }
-
-                const discountEnd = new Date(lesson.discountEnd);
-                discountEnd.setHours(23, 59, 59, 999);
-
-                return discountEnd >= today;
-            });
-
-            const lessonsWithDaysLeft = discountedLessons.map(function (lesson) {
-                const discountEnd = new Date(lesson.discountEnd);
-                discountEnd.setHours(23, 59, 59, 999);
-
-                const timeDiff = discountEnd.getTime() - today.getTime();
-                const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
-                return {
-                    ...lesson,
-                    daysLeft: Math.max(0, daysLeft),
-                };
-            });
-
-            lessonsWithDaysLeft.sort(function (a, b) {
-                return a.daysLeft - b.daysLeft;
-            });
-
-            return lessonsWithDaysLeft;
-        },
-
-        filteredDiscountedLessons: function () {
-            const filtered = this.discountedLessons.filter(
-                function (lesson) {
-                    const matchesCategory =
-                        this.selectedCategory === "All" ||
-                        lesson.category === this.selectedCategory;
-                    const currentPrice = lesson.discounted
-                        ? this.calculateDiscountedPrice(lesson)
-                        : lesson.price;
-                    const matchesPrice =
-                        currentPrice >= this.priceRange[0] &&
-                        currentPrice <= this.priceRange[1];
-                    const matchesSearch =
-                        this.searchQuery === "" ||
-                        lesson.title
-                            .toLowerCase()
-                            .includes(this.searchQuery.toLowerCase()) ||
-                        lesson.subject
-                            .toLowerCase()
-                            .includes(this.searchQuery.toLowerCase()) ||
-                        lesson.professor[0]
-                            .toLowerCase()
-                            .includes(this.searchQuery.toLowerCase());
-
-                    return matchesCategory && matchesPrice && matchesSearch;
-                }.bind(this)
-            );
-
-            return filtered;
-        },
-
-        filteredLessons: function () {
-            let filtered = this.lessons.filter(
-                function (lesson) {
-                    const matchesCategory =
-                        this.selectedCategory === "All" ||
-                        lesson.category === this.selectedCategory;
-                    const currentPrice = lesson.discounted
-                        ? this.calculateDiscountedPrice(lesson)
-                        : lesson.price;
-                    const matchesPrice =
-                        currentPrice >= this.priceRange[0] &&
-                        currentPrice <= this.priceRange[1];
-                    const matchesSearch =
-                        this.searchQuery === "" ||
-                        lesson.title
-                            .toLowerCase()
-                            .includes(this.searchQuery.toLowerCase()) ||
-                        lesson.subject
-                            .toLowerCase()
-                            .includes(this.searchQuery.toLowerCase()) ||
-                        lesson.professor[0]
-                            .toLowerCase()
-                            .includes(this.searchQuery.toLowerCase());
-
-                    return matchesCategory && matchesPrice && matchesSearch;
-                }.bind(this)
-            );
-
-            filtered.sort(
-                function (a, b) {
-                    let valueA;
-                    let valueB;
-
-                    if (this.sortBy === "subject") {
-                        valueA = a.subject.toLowerCase();
-                        valueB = b.subject.toLowerCase();
-                    } else if (this.sortBy === "location") {
-                        if (this.userRegion && this.userRegion !== "") {
-                            const regionA = this.extractRegion(a.location);
-                            const regionB = this.extractRegion(b.location);
-
-                            const distanceA =
-                                this.regionDistances[this.userRegion][regionA] ?? 99;
-                            const distanceB =
-                                this.regionDistances[this.userRegion][regionB] ?? 99;
-
-                            // Compare by distance first
-                            if (distanceA !== distanceB) {
-                                return this.sortOrder === "asc"
-                                    ? distanceA - distanceB
-                                    : distanceB - distanceA;
-                            }
-
-                            // If same distance, compare alphabetically by location
-                            return this.getLocationDisplay(a.location)
-                                .toLowerCase()
-                                .localeCompare(
-                                    this.getLocationDisplay(b.location).toLowerCase()
-                                );
-                        } else {
-                            // Default alphabetical sort when no region selected
-                            return this.sortOrder === "asc"
-                                ? a.location
-                                    .toLowerCase()
-                                    .localeCompare(b.location.toLowerCase())
-                                : b.location
-                                    .toLowerCase()
-                                    .localeCompare(a.location.toLowerCase());
-                        }
-                    } else if (this.sortBy === "price") {
-                        valueA = a.discounted ? this.calculateDiscountedPrice(a) : a.price;
-                        valueB = b.discounted ? this.calculateDiscountedPrice(b) : b.price;
-                    } else if (this.sortBy === "spaces") {
-                        valueA = a.spaces;
-                        valueB = b.spaces;
-                    } else {
-                        valueA = a.subject.toLowerCase();
-                        valueB = b.subject.toLowerCase();
-                    }
-
-                    if (this.sortOrder === "asc") {
-                        // For ascending order: lower values come first
-                        if (valueA < valueB) {
-                            return -1;
-                        }
-                        if (valueA > valueB) {
-                            return 1;
-                        }
-                        return 0;
-                    } else {
-                        // For descending order: higher values come first
-                        if (valueA > valueB) {
-                            return -1;
-                        }
-                        if (valueA < valueB) {
-                            return 1;
-                        }
-                        return 0;
-                    }
-                }.bind(this)
-            );
-
-            return filtered;
-        },
+    checkoutErrors: {
+      parentName: "",
+      phone: "",
+      cardNumber: "",
+      expiryDate: "",
+      cvv: "",
     },
-    methods: {
-        // Toggle between store and cart page
-        toggleCartPage: function() {
-            this.showCartPage = !this.showCartPage;
-            if (!this.showCartPage) {
-                this.resetCheckoutForm();
-            }
-        },
+    currentOrder: null,
 
-        // Reset checkout form
-        resetCheckoutForm: function() {
-            this.checkoutInfo = {
-                parentName: "",
-                phone: "",
-                cardNumber: "",
-                expiryDate: "",
-                cvv: "",
-            };
-            this.checkoutErrors = {
-                parentName: "",
-                phone: "",
-                cardNumber: "",
-                expiryDate: "",
-                cvv: "",
-            };
-        },
+    // Child Info Modal Data
+    selectedLesson: null,
+    childInfo: {
+      name: "",
+      age: "",
+      selectedDay: "",
+    },
+    availableDays: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ],
 
-        // Validate checkout form
-        validateCheckoutForm: function() {
-            // Reset errors
-            this.checkoutErrors = {
-                parentName: "",
-                phone: "",
-                cardNumber: "",
-                expiryDate: "",
-                cvv: "",
-            };
+    regionDistances: {
+      North: { North: 0, Central: 1, East: 2, West: 2, South: 3 },
+      South: { South: 0, Central: 1, East: 2, West: 2, North: 3 },
+      Central: { Central: 0, North: 1, South: 1, East: 1, West: 1 },
+      East: { East: 0, Central: 1, North: 2, South: 2, West: 3 },
+      West: { West: 0, Central: 1, North: 2, South: 2, East: 3 },
+    },
 
-            // Parent Name validation (letters only)
-            const nameRegex = /^[A-Za-z\s]+$/;
-            if (!this.checkoutInfo.parentName.trim()) {
-                this.checkoutErrors.parentName = "Parent name is required";
-            } else if (!nameRegex.test(this.checkoutInfo.parentName)) {
-                this.checkoutErrors.parentName = "Parent name should contain only letters";
-            }
+    lessons: [],
+  },
 
-            // Phone validation (numbers only)
-            const phoneRegex = /^\d+$/;
-            if (!this.checkoutInfo.phone.trim()) {
-                this.checkoutErrors.phone = "Phone number is required";
-            } else if (!phoneRegex.test(this.checkoutInfo.phone)) {
-                this.checkoutErrors.phone = "Phone number should contain only numbers";
-            } else if (this.checkoutInfo.phone.length < 7) {
-                this.checkoutErrors.phone = "Phone number is too short";
-            }
+  computed: {
+    // Check if child info is valid for form submission
+    isChildInfoValid: function () {
+      return (
+        this.childInfo.name.trim() !== "" &&
+        this.childInfo.age !== "" &&
+        this.childInfo.age >= 5 &&
+        this.childInfo.age <= 18 &&
+        this.childInfo.selectedDay !== ""
+      );
+    },
 
-            // Card Number validation
-            const cardRegex = /^\d{16}$/;
-            const cleanCardNumber = this.checkoutInfo.cardNumber.replace(/\s/g, '');
-            if (!cleanCardNumber) {
-                this.checkoutErrors.cardNumber = "Card number is required";
-            } else if (!cardRegex.test(cleanCardNumber)) {
-                this.checkoutErrors.cardNumber = "Card number must be 16 digits";
-            }
+    // Check if checkout form is valid
+    isCheckoutValid: function () {
+      this.validateCheckoutForm();
+      return (
+        !Object.values(this.checkoutErrors).some((error) => error !== "") &&
+        this.checkoutInfo.parentName.trim() !== "" &&
+        this.checkoutInfo.phone.trim() !== "" &&
+        this.checkoutInfo.cardNumber.trim() !== "" &&
+        this.checkoutInfo.expiryDate.trim() !== "" &&
+        this.checkoutInfo.cvv.trim() !== ""
+      );
+    },
 
-            // Expiry Date validation
-            const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
-            if (!this.checkoutInfo.expiryDate.trim()) {
-                this.checkoutErrors.expiryDate = "Expiry date is required";
-            } else if (!expiryRegex.test(this.checkoutInfo.expiryDate)) {
-                this.checkoutErrors.expiryDate = "Format must be MM/YY";
-            }
+    discountedLessons: function () {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-            // CVV validation
-            const cvvRegex = /^\d{3}$/;
-            if (!this.checkoutInfo.cvv.trim()) {
-                this.checkoutErrors.cvv = "CVV is required";
-            } else if (!cvvRegex.test(this.checkoutInfo.cvv)) {
-                this.checkoutErrors.cvv = "CVV must be 3 digits";
-            }
-        },
+      const sourceLessons = this.isSearching
+        ? this.searchResults
+        : this.lessons;
 
-        // Format card number with spaces
-        formatCardNumber: function() {
-            let value = this.checkoutInfo.cardNumber.replace(/\s/g, '');
-            if (value.length > 0) {
-                value = value.match(/.{1,4}/g).join(' ');
-            }
-            this.checkoutInfo.cardNumber = value;
-            this.validateCheckoutForm();
-        },
+      const discountedLessons = sourceLessons.filter(function (lesson) {
+        if (!lesson.discounted) return false;
 
-        // Format expiry date
-        formatExpiryDate: function() {
-            let value = this.checkoutInfo.expiryDate.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2, 4);
-            }
-            this.checkoutInfo.expiryDate = value;
-            this.validateCheckoutForm();
-        },
+        const discountEnd = new Date(lesson.discountEnd);
+        discountEnd.setHours(23, 59, 59, 999);
 
-        // Basic encryption for card details
-        encryptCardData: function(data) {
-            // Simple character shift encryption for demonstration
-            return data.split('').map(char => {
-                if (char.match(/[0-9]/)) {
-                    return String.fromCharCode(((char.charCodeAt(0) - 48 + 5) % 10) + 48);
-                }
-                return char;
-            }).join('');
-        },
+        return discountEnd >= today;
+      });
 
-        // Basic encryption for CVV (bitwise operation + math)
-        encryptCVV: function(cvv) {
-            // Convert to number and apply transformation
-            let num = parseInt(cvv);
-            // Bitwise left shift and add
-            let encrypted = ((num << 2) + 15) ^ 42;
-            return encrypted.toString();
-        },
+      const lessonsWithDaysLeft = discountedLessons.map(function (lesson) {
+        const discountEnd = new Date(lesson.discountEnd);
+        discountEnd.setHours(23, 59, 59, 999);
 
-        // Process checkout
-        processCheckout: function() {
-            this.validateCheckoutForm();
-            if (this.isCheckoutValid) {
-                // Encrypt sensitive data
-                const encryptedCardData = {
-                    cardNumber: this.encryptCardData(this.checkoutInfo.cardNumber.replace(/\s/g, '')),
-                    expiryDate: this.encryptCardData(this.checkoutInfo.expiryDate),
-                    cvv: this.encryptCVV(this.checkoutInfo.cvv)
-                };
+        // FIXED LOGIC:
+        // Instead of Math.ceil, use whole-day diff based on date-only comparison
+        const endDay = new Date(discountEnd);
+        endDay.setHours(0, 0, 0, 0);
 
-                console.log('Encrypted card data:', encryptedCardData);
-                
-                // Create order confirmation data
-                this.currentOrder = {
-                    orderId: 'BMC-' + this.generateReceiptNumber(),
-                    date: this.getCurrentDate(),
-                    parentName: this.checkoutInfo.parentName,
-                    phone: this.checkoutInfo.phone,
-                    items: [...this.cart],
-                    subtotal: this.calculateTotal(),
-                    total: this.calculateTotal()
-                };
+        const timeDiff = endDay.getTime() - today.getTime();
+        const daysLeft = timeDiff / (1000 * 60 * 60 * 24);
 
-                // Show confirmation modal
-                var modal = new bootstrap.Modal(document.getElementById('orderConfirmationModal'));
-                modal.show();
-            }
-        },
+        return {
+          ...lesson,
+          daysLeft: Math.max(0, daysLeft),
+        };
+      });
 
-        // Close confirmation and reset
-        closeConfirmation: function() {
-            // Clear cart and reset forms
-            this.cart = [];
-            this.cartCount = 0;
-            this.showCartPage = false;
-            this.resetCheckoutForm();
-            this.currentOrder = null;
-        },
+      return this.mergeSort(lessonsWithDaysLeft, "daysLeft", "asc");
+    },
 
-        // Open the child info modal
-        openChildModal: function (lesson) {
-            if (lesson.spaces > 0) {
-                this.selectedLesson = lesson;
-                // Reset child info
-                this.childInfo = {
-                    name: "",
-                    age: "",
-                    selectedDay: ""
-                };
-                // Show the modal using Bootstrap
-                var modal = new bootstrap.Modal(document.getElementById('childInfoModal'));
-                modal.show();
-            }
-        },
+    filteredDiscountedLessons: function () {
+      const filtered = this.discountedLessons.filter(
+        function (lesson) {
+          const matchesCategory =
+            this.selectedCategory === "All" ||
+            lesson.category === this.selectedCategory;
+          const currentPrice = lesson.discounted
+            ? this.calculateDiscountedPrice(lesson)
+            : lesson.price;
+          const matchesPrice =
+            currentPrice >= this.priceRange[0] &&
+            currentPrice <= this.priceRange[1];
 
-        // Confirm and add to cart
-        confirmAddToCart: function () {
-            if (this.selectedLesson && this.selectedLesson.spaces > 0 && this.isChildInfoValid) {
-                // Decrement spaces
-                this.selectedLesson.spaces--;
-                
-                // Add child name to lesson's students array
-                this.selectedLesson.students.push(this.childInfo.name);
-                
-                // Add to cart with child info
-                this.cart.push({
-                    lessonId: this.selectedLesson.id,
-                    lessonTitle: this.selectedLesson.title,
-                    price: this.selectedLesson.discounted ? this.calculateDiscountedPrice(this.selectedLesson) : this.selectedLesson.price,
-                    childName: this.childInfo.name,
-                    childAge: this.childInfo.age,
-                    selectedDay: this.childInfo.selectedDay,
-                    sessions: this.selectedLesson.sessions
-                });
-                
-                // Update cart count
-                this.cartCount++;
-                
-                console.log("Added to cart:", this.selectedLesson.title);
-                console.log("Child info:", this.childInfo);
-                console.log("Spaces left:", this.selectedLesson.spaces);
-                console.log("Cart items:", this.cart);
-                
-                // Close the modal
-                var modal = bootstrap.Modal.getInstance(document.getElementById('childInfoModal'));
-                modal.hide();
-                
-                // Reset selected lesson
-                this.selectedLesson = null;
-            }
-        },
+          return matchesCategory && matchesPrice;
+        }.bind(this)
+      );
 
-        // Remove item from cart
-        removeFromCart: function(index) {
-            const item = this.cart[index];
-            
-            // Find the lesson and restore the space
-            const lesson = this.getLessonById(item.lessonId);
-            if (lesson) {
-                lesson.spaces++;
-                
-                // Remove child name from lesson's students array
-                const studentIndex = lesson.students.indexOf(item.childName);
-                if (studentIndex > -1) {
-                    lesson.students.splice(studentIndex, 1);
-                }
-            }
-            
-            // Remove from cart
-            this.cart.splice(index, 1);
-            this.cartCount--;
-            
-            console.log("Removed from cart:", item.lessonTitle);
-            console.log("Spaces restored for:", lesson.title, "New spaces:", lesson.spaces);
-        },
+      return filtered;
+    },
 
-        // Get lesson by ID
-        getLessonById: function(lessonId) {
-            return this.lessons.find(lesson => lesson.id === lessonId) || {};
-        },
+    filteredLessons: function () {
+      // Use search results if searching, otherwise use all lessons
+      const sourceLessons = this.isSearching
+        ? this.searchResults
+        : this.lessons;
 
-        // Calculate total
-        calculateTotal: function() {
-            return this.cart.reduce((total, item) => total + item.price, 0);
-        },
+      let filtered = sourceLessons.filter(
+        function (lesson) {
+          const matchesCategory =
+            this.selectedCategory === "All" ||
+            lesson.category === this.selectedCategory;
+          const currentPrice = lesson.discounted
+            ? this.calculateDiscountedPrice(lesson)
+            : lesson.price;
+          const matchesPrice =
+            currentPrice >= this.priceRange[0] &&
+            currentPrice <= this.priceRange[1];
 
-        // Generate receipt number
-        generateReceiptNumber: function() {
-            return Math.random().toString(36).substr(2, 9).toUpperCase();
-        },
+          return matchesCategory && matchesPrice;
+        }.bind(this)
+      );
 
-        // Get current date
-        getCurrentDate: function() {
-            return new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        },
+      filtered = this.mergeSort(filtered, this.sortBy, this.sortOrder);
 
-        calculateDiscountedPrice: function (lesson) {
-            return Math.round(lesson.price * (1 - lesson.discountPercent / 100));
-        },
+      return filtered;
+    },
+  },
 
-        extractRegion: function (location) {
-            const parts = location.split(",");
-            return parts[0].trim();
-        },
+  methods: {
+    // ========== MERGE SORT IMPLEMENTATION ==========
+    // Manually implemented Merge Sort algorithm for sorting lessons
+    // Merge Sort is efficient and stable with O(n log n) time complexity
 
-        getLocationDisplay: function (location) {
-            const parts = location.split(",");
-            return parts.slice(1).join(",").trim();
-        },
+    mergeSort: function (
+      array,
+      sortBy = this.sortBy,
+      sortOrder = this.sortOrder
+    ) {
+      // Base case: if array has 1 or 0 elements, it's already sorted
+      if (array.length <= 1) {
+        return array;
+      }
 
-        getUrgencyClass: function (lesson) {
-            if (!lesson.discounted) return "green";
+      // Step 1: Divide the array into two halves
+      const middle = Math.floor(array.length / 2);
+      const leftHalf = array.slice(0, middle);
+      const rightHalf = array.slice(middle);
 
-            const discountStart = new Date(lesson.discountStart);
-            const discountEnd = new Date(lesson.discountEnd);
-            const totalDays = Math.ceil(
-                (discountEnd - discountStart) / (1000 * 60 * 60 * 24)
-            );
-            const daysLeft = lesson.daysLeft;
-            const percentageLeft = (daysLeft / totalDays) * 100;
+      // Step 2: Recursively sort both halves
+      const sortedLeft = this.mergeSort(leftHalf, sortBy, sortOrder);
+      const sortedRight = this.mergeSort(rightHalf, sortBy, sortOrder);
 
-            // Priority: Last day (0 days) should be red, then check percentage
-            if (daysLeft === 0) return "red";
-            if (percentageLeft <= 25) return "red";
-            if (percentageLeft <= 50) return "orange";
-            return "green";
-        },
+      // Step 3: Merge the sorted halves back together
+      return this.merge(sortedLeft, sortedRight, sortBy, sortOrder);
+    },
 
-        getSpacesUrgencyClass: function (lesson) {
-            const percentageLeft = (lesson.spaces / lesson.initialSpaces) * 100;
+    merge: function (left, right, sortBy, sortOrder) {
+      // This function merges two sorted arrays into one sorted array
+      let result = [];
+      let leftIndex = 0;
+      let rightIndex = 0;
 
-            if (percentageLeft <= 25) return "red";
-            if (percentageLeft <= 50) return "orange";
-            return "green";
-        },
+      // Compare elements from left and right arrays and add smaller one to result
+      while (leftIndex < left.length && rightIndex < right.length) {
+        const leftLesson = left[leftIndex];
+        const rightLesson = right[rightIndex];
 
-        getDaysText: function (daysLeft) {
-            if (daysLeft === 0) return "Last day";
-            if (daysLeft === 1) return "1 day left";
-            return `${daysLeft} days left`;
-        },
+        // Compare the two lessons based on current sort criteria
+        if (
+          this.compareLessons(leftLesson, rightLesson, sortBy, sortOrder) <= 0
+        ) {
+          result.push(leftLesson);
+          leftIndex++;
+        } else {
+          result.push(rightLesson);
+          rightIndex++;
+        }
+      }
 
-        prevSlide: function () {
-            if (this.currentSlide > 0) {
-                this.currentSlide--;
-            }
-        },
+      // Add any remaining elements from left array
+      while (leftIndex < left.length) {
+        result.push(left[leftIndex]);
+        leftIndex++;
+      }
 
-        nextSlide: function () {
-            if (this.currentSlide < this.filteredDiscountedLessons.length - 1) {
-                this.currentSlide++;
-            }
-        },
+      // Add any remaining elements from right array
+      while (rightIndex < right.length) {
+        result.push(right[rightIndex]);
+        rightIndex++;
+      }
 
-        updatePriceRange: function () {
-            if (this.priceRange[0] > this.priceRange[1]) {
-                this.priceRange[0] = this.priceRange[1];
-            }
-            if (this.priceRange[1] < this.priceRange[0]) {
-                this.priceRange[1] = this.priceRange[0];
-            }
-        },
+      return result;
+    },
 
-        toggleSortOrder: function () {
-            if (this.sortOrder === "asc") {
-                this.sortOrder = "desc";
+    compareLessons: function (
+      lessonA,
+      lessonB,
+      sortBy = this.sortBy,
+      sortOrder = this.sortOrder
+    ) {
+      // This function compares two lessons based on the selected sort criteria
+      // Returns: -1 if lessonA comes first, 1 if lessonB comes first, 0 if equal
+
+      let valueA;
+      let valueB;
+
+      // Special case for discounted lessons sorting by daysLeft
+      if (sortBy === "daysLeft") {
+        valueA = lessonA.daysLeft;
+        valueB = lessonB.daysLeft;
+
+        if (sortOrder === "asc") {
+          return valueA - valueB;
+        } else {
+          return valueB - valueA;
+        }
+      }
+
+      // Determine what values to compare based on sortBy option
+      if (sortBy === "subject") {
+        valueA = lessonA.subject.toLowerCase();
+        valueB = lessonB.subject.toLowerCase();
+      } else if (sortBy === "location") {
+        // Special handling for location sorting
+        if (this.userRegion && this.userRegion !== "") {
+          // If user selected a region, sort by distance from that region
+          const regionA = this.extractRegion(lessonA.location);
+          const regionB = this.extractRegion(lessonB.location);
+
+          const distanceA =
+            this.regionDistances[this.userRegion][regionA] ?? 99;
+          const distanceB =
+            this.regionDistances[this.userRegion][regionB] ?? 99;
+
+          // If distances are different, compare by distance
+          if (distanceA !== distanceB) {
+            if (sortOrder === "asc") {
+              return distanceA - distanceB;
             } else {
-                this.sortOrder = "asc";
+              return distanceB - distanceA;
             }
-        },
+          }
+
+          // If distances are same, compare alphabetically by location name
+          valueA = this.getLocationDisplay(lessonA.location).toLowerCase();
+          valueB = this.getLocationDisplay(lessonB.location).toLowerCase();
+        } else {
+          // No region selected, just sort alphabetically by location
+          valueA = lessonA.location.toLowerCase();
+          valueB = lessonB.location.toLowerCase();
+        }
+      } else if (sortBy === "price") {
+        // Get actual price (considering discounts)
+        valueA = lessonA.discounted
+          ? this.calculateDiscountedPrice(lessonA)
+          : lessonA.price;
+        valueB = lessonB.discounted
+          ? this.calculateDiscountedPrice(lessonB)
+          : lessonB.price;
+      } else if (sortBy === "spaces") {
+        // Get available spaces
+        valueA = this.calculateAvailableSpaces(lessonA);
+        valueB = this.calculateAvailableSpaces(lessonB);
+      } else {
+        // Default to subject if sortBy is not recognized
+        valueA = lessonA.subject.toLowerCase();
+        valueB = lessonB.subject.toLowerCase();
+      }
+
+      // Compare the values based on sort order (ascending or descending)
+      if (sortOrder === "asc") {
+        // Ascending order: smaller values come first
+        if (valueA < valueB) return -1;
+        if (valueA > valueB) return 1;
+        return 0;
+      } else {
+        // Descending order: larger values come first
+        if (valueA > valueB) return -1;
+        if (valueA < valueB) return 1;
+        return 0;
+      }
     },
 
-    // Lifecycle hook to check discount status when app loads
-    created: function () {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+    // A. GET - Fetch all lessons from backend
+    async fetchLessons() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/lessons`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch lessons");
+        }
+        const data = await response.json();
+        this.lessons = data;
+        console.log("Lessons fetched successfully:", this.lessons.length);
+      } catch (error) {
+        console.error("Error fetching lessons:", error);
+        alert("Failed to load lessons. Please refresh the page.");
+      }
+    },
 
-        this.lessons.forEach(function (lesson) {
-            if (lesson.discounted) {
-                const discountEnd = new Date(lesson.discountEnd);
-                discountEnd.setHours(23, 59, 59, 999);
-
-                if (discountEnd < today) {
-                    lesson.discounted = false;
-                }
-            }
+    // B. POST - Save order to backend
+    async saveOrder(orderData) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/orders`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderData),
         });
+
+        if (!response.ok) {
+          throw new Error("Failed to save order");
+        }
+
+        const result = await response.json();
+        console.log("Order saved successfully:", result);
+        return result;
+      } catch (error) {
+        console.error("Error saving order:", error);
+        throw error;
+      }
     },
+
+    // C. PUT - Update lesson with new student booking
+    async updateLessonBooking(lessonId, childName, selectedDay, spacesBooked) {
+      try {
+        const lesson = this.getLessonById(lessonId);
+        if (!lesson) {
+          throw new Error("Lesson not found");
+        }
+
+        // Find or create the day in sessionsBooked
+        let daySession = lesson.sessionsBooked
+          ? lesson.sessionsBooked.find((s) => s.day === selectedDay)
+          : null;
+
+        if (!daySession) {
+          daySession = {
+            day: selectedDay,
+            students: [],
+          };
+          if (!lesson.sessionsBooked) {
+            lesson.sessionsBooked = [];
+          }
+          lesson.sessionsBooked.push(daySession);
+        }
+
+        // Add the new student
+        daySession.students.push({
+          name: childName,
+          spacesBooked: spacesBooked,
+        });
+
+        // Prepare update data
+        const updateData = {
+          sessionsBooked: lesson.sessionsBooked,
+        };
+
+        const response = await fetch(`${API_BASE_URL}/lessons/${lessonId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updateData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update lesson");
+        }
+
+        const result = await response.json();
+        console.log("Lesson updated successfully:", result);
+
+        // Update local data
+        const lessonIndex = this.lessons.findIndex((l) => l.id === lessonId);
+        if (lessonIndex !== -1) {
+          this.lessons[lessonIndex] = result;
+        }
+
+        return result;
+      } catch (error) {
+        console.error("Error updating lesson:", error);
+        throw error;
+      }
+    },
+
+    // BACKEND SEARCH - Search as you type functionality
+    async performSearch() {
+      // Clear previous debounce timer
+      if (this.searchDebounceTimer) {
+        clearTimeout(this.searchDebounceTimer);
+      }
+
+      // If search query is empty, reset to show all lessons
+      if (this.searchQuery.trim() === "") {
+        this.searchResults = [];
+        this.isSearching = false;
+        return;
+      }
+
+      // Debounce search - wait 300ms after user stops typing
+      this.searchDebounceTimer = setTimeout(async () => {
+        try {
+          this.isSearching = true;
+
+          // Call backend search API
+          const response = await fetch(
+            `${API_BASE_URL}/search?q=${encodeURIComponent(this.searchQuery)}`
+          );
+
+          if (!response.ok) {
+            throw new Error("Search request failed");
+          }
+
+          const result = await response.json();
+
+          if (result.success) {
+            this.searchResults = result.data;
+            console.log(
+              `Search found ${result.count} results for: "${this.searchQuery}"`
+            );
+          } else {
+            console.error("Search error:", result.error);
+            this.searchResults = [];
+          }
+        } catch (error) {
+          console.error("Error performing search:", error);
+          this.searchResults = [];
+          // Don't show alert for search errors, just log them
+        }
+      }, 300); // 300ms debounce delay for "search as you type"
+    },
+
+    // Calculate available spaces based on spaces (not initialSpaces) minus all booked students
+    calculateAvailableSpaces(lesson) {
+      // Use lesson.spaces instead of lesson.initialSpaces
+      const totalSpaces = lesson.spaces || 0;
+
+      if (!lesson.sessionsBooked || lesson.sessionsBooked.length === 0) {
+        return totalSpaces;
+      }
+
+      let totalBooked = 0;
+      lesson.sessionsBooked.forEach((daySession) => {
+        if (daySession.students && Array.isArray(daySession.students)) {
+          daySession.students.forEach((student) => {
+            totalBooked += student.spacesBooked || 1;
+          });
+        }
+      });
+
+      return Math.max(0, totalSpaces - totalBooked);
+    },
+
+    // Toggle between store and cart page
+    toggleCartPage: function () {
+      this.showCartPage = !this.showCartPage;
+      if (!this.showCartPage) {
+        this.resetCheckoutForm();
+      }
+    },
+
+    // Reset checkout form
+    resetCheckoutForm: function () {
+      this.checkoutInfo = {
+        parentName: "",
+        phone: "",
+        cardNumber: "",
+        expiryDate: "",
+        cvv: "",
+      };
+      this.checkoutErrors = {
+        parentName: "",
+        phone: "",
+        cardNumber: "",
+        expiryDate: "",
+        cvv: "",
+      };
+    },
+
+    // Validate checkout form
+    validateCheckoutForm: function () {
+      this.checkoutErrors = {
+        parentName: "",
+        phone: "",
+        cardNumber: "",
+        expiryDate: "",
+        cvv: "",
+      };
+
+      const nameRegex = /^[A-Za-z\s]+$/;
+      if (!this.checkoutInfo.parentName.trim()) {
+        this.checkoutErrors.parentName = "Parent name is required";
+      } else if (!nameRegex.test(this.checkoutInfo.parentName)) {
+        this.checkoutErrors.parentName =
+          "Parent name should contain only letters";
+      }
+
+      const phoneRegex = /^\d+$/;
+      if (!this.checkoutInfo.phone.trim()) {
+        this.checkoutErrors.phone = "Phone number is required";
+      } else if (!phoneRegex.test(this.checkoutInfo.phone)) {
+        this.checkoutErrors.phone = "Phone number should contain only numbers";
+      } else if (this.checkoutInfo.phone.length < 7) {
+        this.checkoutErrors.phone = "Phone number is too short";
+      }
+
+      const cardRegex = /^\d{16}$/;
+      const cleanCardNumber = this.checkoutInfo.cardNumber.replace(/\s/g, "");
+      if (!cleanCardNumber) {
+        this.checkoutErrors.cardNumber = "Card number is required";
+      } else if (!cardRegex.test(cleanCardNumber)) {
+        this.checkoutErrors.cardNumber = "Card number must be 16 digits";
+      }
+
+      const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+      if (!this.checkoutInfo.expiryDate.trim()) {
+        this.checkoutErrors.expiryDate = "Expiry date is required";
+      } else if (!expiryRegex.test(this.checkoutInfo.expiryDate)) {
+        this.checkoutErrors.expiryDate = "Format must be MM/YY";
+      }
+
+      const cvvRegex = /^\d{3}$/;
+      if (!this.checkoutInfo.cvv.trim()) {
+        this.checkoutErrors.cvv = "CVV is required";
+      } else if (!cvvRegex.test(this.checkoutInfo.cvv)) {
+        this.checkoutErrors.cvv = "CVV must be 3 digits";
+      }
+    },
+
+    // Format card number with spaces
+    formatCardNumber: function () {
+      let value = this.checkoutInfo.cardNumber.replace(/\s/g, "");
+      if (value.length > 0) {
+        value = value.match(/.{1,4}/g).join(" ");
+      }
+      this.checkoutInfo.cardNumber = value;
+      this.validateCheckoutForm();
+    },
+
+    // Format expiry date
+    formatExpiryDate: function () {
+      let value = this.checkoutInfo.expiryDate.replace(/\D/g, "");
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + "/" + value.substring(2, 4);
+      }
+      this.checkoutInfo.expiryDate = value;
+      this.validateCheckoutForm();
+    },
+
+    // Encryption for card details
+    encryptCardData: function (data) {
+      return data
+        .split("")
+        .map((char) => {
+          if (char.match(/[0-9]/)) {
+            return String.fromCharCode(
+              ((char.charCodeAt(0) - 48 + 5) % 10) + 48
+            );
+          }
+          return char;
+        })
+        .join("");
+    },
+
+    // Encryption for CVV
+    encryptCVV: function (cvv) {
+      let num = parseInt(cvv);
+      let encrypted = ((num << 2) + 15) ^ 42;
+      return encrypted.toString();
+    },
+
+    // Decryption for testing (card data)
+    decryptCardData: function (encryptedData) {
+      return encryptedData
+        .split("")
+        .map((char) => {
+          if (char.match(/[0-9]/)) {
+            return String.fromCharCode(
+              ((char.charCodeAt(0) - 48 - 5 + 10) % 10) + 48
+            );
+          }
+          return char;
+        })
+        .join("");
+    },
+
+    // Decryption for testing (CVV)
+    decryptCVV: function (encryptedCVV) {
+      let num = parseInt(encryptedCVV);
+      let decrypted = (num ^ 42) - 15;
+      decrypted = decrypted >> 2;
+      return decrypted.toString().padStart(3, "0");
+    },
+
+    // Process checkout
+    async processCheckout() {
+      this.validateCheckoutForm();
+      if (!this.isCheckoutValid || this.isProcessing) {
+        return;
+      }
+
+      this.isProcessing = true;
+
+      try {
+        // Encrypt sensitive payment data
+        const encryptedCardData = {
+          cardNumber: this.encryptCardData(
+            this.checkoutInfo.cardNumber.replace(/\s/g, "")
+          ),
+          expiryDate: this.encryptCardData(this.checkoutInfo.expiryDate),
+          cvv: this.encryptCVV(this.checkoutInfo.cvv),
+        };
+
+        console.log("=== PAYMENT ENCRYPTION TEST ===");
+        console.log("Encrypted payment data:", encryptedCardData);
+        console.log("Decrypted for verification:", {
+          cardNumber: this.decryptCardData(encryptedCardData.cardNumber),
+          expiryDate: this.decryptCardData(encryptedCardData.expiryDate),
+          cvv: this.decryptCVV(encryptedCardData.cvv),
+        });
+        console.log("==============================");
+
+        // Prepare order data for backend
+        const orderData = {
+          customer: {
+            parentName: this.checkoutInfo.parentName,
+            phoneNumber: this.checkoutInfo.phone,
+          },
+          orderItems: this.cart.map((item) => ({
+            lessonID: item.lessonId,
+            title: item.lessonTitle,
+            spaces: 1,
+            priceAtBooking: item.price,
+            childInfo: {
+              name: item.childName,
+              age: item.childAge,
+              selectedDay: item.selectedDay,
+            },
+          })),
+        };
+
+        // B. POST - Save order to backend
+        const orderResult = await this.saveOrder(orderData);
+
+        // C. PUT - Update each lesson with the new booking
+        for (const item of this.cart) {
+          await this.updateLessonBooking(
+            item.lessonId,
+            item.childName,
+            item.selectedDay,
+            1 // spaces booked
+          );
+        }
+
+        // Create order confirmation data
+        this.currentOrder = {
+          orderId: orderResult.orderId || "BMC-" + this.generateReceiptNumber(),
+          date: this.getCurrentDate(),
+          parentName: this.checkoutInfo.parentName,
+          phone: this.checkoutInfo.phone,
+          items: [...this.cart],
+          subtotal: this.calculateTotal(),
+          total: this.calculateTotal(),
+        };
+
+        // Show confirmation modal
+        const modal = new bootstrap.Modal(
+          document.getElementById("orderConfirmationModal")
+        );
+        modal.show();
+      } catch (error) {
+        console.error("Checkout error:", error);
+        alert("Failed to complete checkout. Please try again.");
+      } finally {
+        this.isProcessing = false;
+      }
+    },
+
+    // Close confirmation and reset
+    closeConfirmation: function () {
+      this.cart = [];
+      this.cartCount = 0;
+      this.showCartPage = false;
+      this.resetCheckoutForm();
+      this.currentOrder = null;
+
+      // Reload lessons to get updated data
+      this.fetchLessons();
+    },
+
+    // Open the child info modal
+    openChildModal: function (lesson) {
+      const availableSpaces = this.calculateAvailableSpaces(lesson);
+      if (availableSpaces > 0) {
+        this.selectedLesson = lesson;
+        this.childInfo = {
+          name: "",
+          age: "",
+          selectedDay: "",
+        };
+        const modal = new bootstrap.Modal(
+          document.getElementById("childInfoModal")
+        );
+        modal.show();
+      }
+    },
+
+    // Confirm and add to cart
+    confirmAddToCart: function () {
+      if (
+        this.selectedLesson &&
+        this.calculateAvailableSpaces(this.selectedLesson) > 0 &&
+        this.isChildInfoValid
+      ) {
+        // Add to cart with child info
+        this.cart.push({
+          lessonId: this.selectedLesson.id,
+          lessonTitle: this.selectedLesson.title,
+          price: this.selectedLesson.discounted
+            ? this.calculateDiscountedPrice(this.selectedLesson)
+            : this.selectedLesson.price,
+          childName: this.childInfo.name,
+          childAge: this.childInfo.age,
+          selectedDay: this.childInfo.selectedDay,
+          sessions: this.selectedLesson.sessions,
+        });
+
+        this.cartCount++;
+
+        console.log("Added to cart:", this.selectedLesson.title);
+        console.log("Child info:", this.childInfo);
+        console.log("Cart items:", this.cart);
+
+        // Close the modal
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("childInfoModal")
+        );
+        modal.hide();
+
+        this.selectedLesson = null;
+      }
+    },
+
+    // Remove item from cart
+    removeFromCart: function (index) {
+      const item = this.cart[index];
+      this.cart.splice(index, 1);
+      this.cartCount--;
+      console.log("Removed from cart:", item.lessonTitle);
+    },
+
+    // Get lesson by ID
+    getLessonById: function (lessonId) {
+      return this.lessons.find((lesson) => lesson.id === lessonId) || {};
+    },
+
+    // Calculate total
+    calculateTotal: function () {
+      return this.cart.reduce((total, item) => total + item.price, 0);
+    },
+
+    // Generate receipt number
+    generateReceiptNumber: function () {
+      return Math.random().toString(36).substr(2, 9).toUpperCase();
+    },
+
+    // Get current date
+    getCurrentDate: function () {
+      return new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    },
+
+    calculateDiscountedPrice: function (lesson) {
+      return Math.round(lesson.price * (1 - lesson.discountPercent / 100));
+    },
+
+    extractRegion: function (location) {
+      const parts = location.split(",");
+      return parts[0].trim();
+    },
+
+    getLocationDisplay: function (location) {
+      const parts = location.split(",");
+      return parts.slice(1).join(",").trim();
+    },
+
+    getUrgencyClass: function (lesson) {
+      if (!lesson.discounted) return "green";
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const discountEnd = new Date(lesson.discountEnd);
+      discountEnd.setHours(0, 0, 0, 0);
+
+      const timeDiff = discountEnd.getTime() - today.getTime();
+      const daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+      if (daysLeft <= 1) return "red"; 
+      if (daysLeft <= 3) return "orange"; 
+      return "green";
+    },
+
+    getSpacesUrgencyClass: function (lesson) {
+      const availableSpaces = this.calculateAvailableSpaces(lesson);
+      const totalSpaces = lesson.spaces || 1;
+
+      if (availableSpaces === 0) return "red";
+      if (availableSpaces <= Math.ceil(totalSpaces * 0.25)) return "red";
+      if (availableSpaces <= Math.ceil(totalSpaces * 0.5)) return "orange";
+      return "green";
+    },
+
+    getDaysText: function (daysLeft) {
+      if (daysLeft === 0) return "Last day";
+      if (daysLeft === 1) return "1 day left";
+      return `${daysLeft} days left`;
+    },
+
+    prevSlide: function () {
+      if (this.currentSlide > 0) {
+        this.currentSlide--;
+      }
+    },
+
+    nextSlide: function () {
+      if (this.currentSlide < this.filteredDiscountedLessons.length - 1) {
+        this.currentSlide++;
+      }
+    },
+
+    updatePriceRange: function () {
+      if (this.priceRange[0] > this.priceRange[1]) {
+        this.priceRange[0] = this.priceRange[1];
+      }
+      if (this.priceRange[1] < this.priceRange[0]) {
+        this.priceRange[1] = this.priceRange[0];
+      }
+    },
+
+    toggleSortOrder: function () {
+      this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+    },
+
+    // Check and update expired discounts
+    async checkExpiredDiscounts() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const expiredLessons = this.lessons.filter((lesson) => {
+        if (!lesson.discounted) return false;
+
+        const discountEnd = new Date(lesson.discountEnd);
+        discountEnd.setHours(23, 59, 59, 999);
+
+        return discountEnd < today;
+      });
+
+      // Update expired discounts in backend
+      for (const lesson of expiredLessons) {
+        try {
+          const updateData = {
+            discounted: false,
+            discountPercent: 0,
+            discountStart: "",
+            discountEnd: "",
+          };
+
+          await fetch(`${API_BASE_URL}/lessons/${lesson.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updateData),
+          });
+
+          console.log(`Discount expired for lesson: ${lesson.title}`);
+        } catch (error) {
+          console.error(
+            `Error updating expired discount for lesson ${lesson.id}:`,
+            error
+          );
+        }
+      }
+
+      // Reload lessons after updating
+      if (expiredLessons.length > 0) {
+        await this.fetchLessons();
+      }
+    },
+  },
+
+  // Lifecycle hook - fetch lessons when app loads
+  async created() {
+    // A. GET - Fetch all lessons from backend
+    await this.fetchLessons();
+
+    // Check for expired discounts
+    await this.checkExpiredDiscounts();
+  },
 });
