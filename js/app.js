@@ -1,5 +1,6 @@
 // API Base URL
 const API_BASE_URL = "https://bookmyclass-backend.onrender.com";
+
 let webstore = new Vue({
   el: "#app",
   data: {
@@ -108,8 +109,6 @@ let webstore = new Vue({
         const discountEnd = new Date(lesson.discountEnd);
         discountEnd.setHours(23, 59, 59, 999);
 
-        // FIXED LOGIC:
-        // Instead of Math.ceil, use whole-day diff based on date-only comparison
         const endDay = new Date(discountEnd);
         endDay.setHours(0, 0, 0, 0);
 
@@ -478,9 +477,9 @@ let webstore = new Vue({
       }, 300); // 300ms debounce delay for "search as you type"
     },
 
-    // Calculate available spaces based on spaces (not initialSpaces) minus all booked students
+    // Calculate available spaces based on spaces minus all booked students
     calculateAvailableSpaces(lesson) {
-      // Use lesson.spaces instead of lesson.initialSpaces
+      
       const totalSpaces = lesson.spaces || 0;
 
       if (!lesson.sessionsBooked || lesson.sessionsBooked.length === 0) {
@@ -700,9 +699,10 @@ let webstore = new Vue({
           );
         }
 
-        // Create order confirmation data
+        // Create order confirmation data - FIXED: Use the generated receipt ID from backend
+        const receiptId = orderResult.orderId || "BMC-" + this.generateReceiptNumber();
         this.currentOrder = {
-          orderId: orderResult.orderId || "BMC-" + this.generateReceiptNumber(),
+          orderId: receiptId, // Use the consistent receipt ID
           date: this.getCurrentDate(),
           parentName: this.checkoutInfo.parentName,
           phone: this.checkoutInfo.phone,
