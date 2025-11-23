@@ -68,7 +68,8 @@
                     </div>
                     <div class="receipt-info">
                       <p>
-                        <strong>Order #:</strong> Order will be generated after checkout
+                        <strong>Order #:</strong> Order will be generated after
+                        checkout
                       </p>
                       <p><strong>Date:</strong> {{ getCurrentDate() }}</p>
                     </div>
@@ -357,34 +358,40 @@
 
                 <!-- Price Range Filter -->
                 <div class="filter-group">
-                  <label class="filter-label">Price Range</label>
-                  <div class="price-range-container">
-                    <div class="price-display">
-                      <span class="price-min">Rs {{ priceRange[0] }}</span>
-                      <span class="price-separator">-</span>
-                      <span class="price-max">Rs {{ priceRange[1] }}</span>
-                    </div>
-                    <div class="price-slider-container">
-                      <input
-                        type="range"
-                        class="form-range price-slider"
-                        min="800"
-                        max="2100"
-                        step="100"
-                        v-model="priceRange[0]"
-                        @input="updatePriceRange"
-                      />
-                      <input
-                        type="range"
-                        class="form-range price-slider"
-                        min="800"
-                        max="2100"
-                        step="100"
-                        v-model="priceRange[1]"
-                        @input="updatePriceRange"
-                      />
-                    </div>
+                  <label
+                    >Price Range: Rs {{ priceRange[0] }} - Rs {{ priceRange[1]
+                    }}</label
+                  >
+                  <div class="price-inputs">
+                    <input
+                      type="number"
+                      v-model="priceRange[0]"
+                      @input="updatePriceRange"
+                      class="form-control"
+                      placeholder="Min"
+                    />
+                    <span>to</span>
+                    <input
+                      type="number"
+                      v-model="priceRange[1]"
+                      @input="updatePriceRange"
+                      class="form-control"
+                      placeholder="Max"
+                    />
                   </div>
+                  
+                  <input
+                    type="range"
+                    v-model="priceRange[0]"
+                    @input="updatePriceRange"
+                    class="form-range"
+                  />
+                  <input
+                    type="range"
+                    v-model="priceRange[1]"
+                    @input="updatePriceRange"
+                    class="form-range"
+                  />
                 </div>
 
                 <div class="filter-divider"></div>
