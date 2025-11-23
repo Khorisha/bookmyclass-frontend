@@ -537,7 +537,7 @@ body {
     font-size: 0.75rem;
 }
 
-/* Price Range */
+/* Price Range - UPDATED FOR DUAL SLIDER */
 .price-range-container {
     background: #F9FAFB;
     border: 1px solid #E5E7EB;
@@ -569,30 +569,45 @@ body {
 
 .price-slider-container {
     position: relative;
-    height: 50px;
+    height: 40px;
     margin-top: 0.5rem;
+}
+
+.range-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: #D1D5DB;
+    border-radius: 3px;
+    transform: translateY(-50%);
+}
+
+.range-fill {
+    position: absolute;
+    top: 50%;
+    height: 6px;
+    background: #6366F1;
+    border-radius: 3px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: all 0.3s ease;
 }
 
 .price-slider {
     position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
     width: 100%;
-    margin: 0;
+    height: 0;
+    transform: translateY(-50%);
     -webkit-appearance: none;
     appearance: none;
-    height: 6px;
-    background: #D1D5DB;
-    outline: none;
-    border-radius: 3px;
-    pointer-events: all;
-}
-
-.price-slider:first-of-type {
-    background: linear-gradient(to right, #6366F1 0%, #D1D5DB 100%);
-}
-
-.price-slider:last-of-type {
     background: transparent;
-    top: 0;
+    pointer-events: none;
+    z-index: 2;
 }
 
 .price-slider::-webkit-slider-thumb {
@@ -605,6 +620,17 @@ body {
     border-radius: 50%;
     border: 3px solid white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    pointer-events: all;
+    position: relative;
+    z-index: -4;
+    transform: translateY(-4px);
+    transition: all 0.2s ease;
+}
+
+.price-slider::-webkit-slider-thumb:hover {
+    background: #4F46E5;
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
 
 .price-slider::-moz-range-thumb {
@@ -615,6 +641,17 @@ body {
     border-radius: 50%;
     border: 3px solid white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    pointer-events: all;
+    position: relative;
+    z-index: -4;
+    transform: translateY(-4px);
+    transition: all 0.2s ease;
+}
+
+.price-slider::-moz-range-thumb:hover {
+    background: #4F46E5;
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
 
 .price-slider::-webkit-slider-runnable-track {
@@ -627,6 +664,15 @@ body {
     height: 6px;
     background: transparent;
     border-radius: 3px;
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    font-size: 0.8rem;
+    color: #6B7280;
+    font-weight: 500;
 }
 
 /* Sort Container */

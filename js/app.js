@@ -9,7 +9,7 @@ let webstore = new Vue({
     cart: [],
     currentSlide: 0,
     selectedCategory: "All",
-    priceRange: [800, 2100],
+    priceRange: [800, 2100], 
     sortBy: "subject",
     sortOrder: "asc",
     searchQuery: "",
@@ -844,17 +844,28 @@ let webstore = new Vue({
       }
     },
 
+    // FIXED: Proper price range update method
     updatePriceRange: function () {
-      // Ensure the price range stays within valid bounds for Rs prices
+      // Ensure values are numbers
+      this.priceRange[0] = parseInt(this.priceRange[0]) || 800;
+      this.priceRange[1] = parseInt(this.priceRange[1]) || 2100;
+      
+      // Ensure min doesn't go below 800
       if (this.priceRange[0] < 800) {
         this.priceRange[0] = 800;
       }
+      
+      // Ensure max doesn't go above 2100
       if (this.priceRange[1] > 2100) {
         this.priceRange[1] = 2100;
       }
+      
+      // Ensure min is not greater than max
       if (this.priceRange[0] > this.priceRange[1]) {
         this.priceRange[0] = this.priceRange[1];
       }
+      
+      // Ensure max is not less than min
       if (this.priceRange[1] < this.priceRange[0]) {
         this.priceRange[1] = this.priceRange[0];
       }
@@ -921,7 +932,7 @@ let webstore = new Vue({
         const maxPrice = Math.max(...prices);
         
         // Only update if the calculated range makes sense
-        if (minPrice >= 800 && maxPrice <= 2100) {
+        if (minPrice >= 800 && maxPrice <= 2100 && minPrice <= maxPrice) {
           this.priceRange = [minPrice, maxPrice];
         }
       }

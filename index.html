@@ -235,7 +235,7 @@
                               <div
                                 class="invalid-feedback"
                                 v-if="checkoutErrors.expiryDate"
-                              >
+                            >
                                 {{ checkoutErrors.expiryDate }}
                               </div>
                             </div>
@@ -356,42 +356,44 @@
 
                 <div class="filter-divider"></div>
 
-                <!-- Price Range Filter -->
+                <!-- Price Range Filter - DUAL RANGE SLIDER -->
                 <div class="filter-group">
-                  <label
-                    >Price Range: Rs {{ priceRange[0] }} - Rs {{ priceRange[1]
-                    }}</label
-                  >
-                  <div class="price-inputs">
-                    <input
-                      type="number"
-                      v-model="priceRange[0]"
-                      @input="updatePriceRange"
-                      class="form-control"
-                      placeholder="Min"
-                    />
-                    <span>to</span>
-                    <input
-                      type="number"
-                      v-model="priceRange[1]"
-                      @input="updatePriceRange"
-                      class="form-control"
-                      placeholder="Max"
-                    />
+                  <label class="filter-label">Price Range</label>
+                  <div class="price-range-container">
+                    <div class="price-display">
+                      <span class="price-min">Rs {{ priceRange[0] }}</span>
+                      <span class="price-separator">-</span>
+                      <span class="price-max">Rs {{ priceRange[1] }}</span>
+                    </div>
+                    
+                    <!-- Dual Range Slider -->
+                    <div class="price-slider-container">
+                      <div class="range-track"></div>
+                      <div class="range-fill" :style="{ 
+                        left: ((priceRange[0] - 800) / (2100 - 800) * 100) + '%', 
+                        right: (100 - ((priceRange[1] - 800) / (2100 - 800) * 100)) + '%' 
+                      }"></div>
+                      
+                      <input
+                        type="range"
+                        v-model="priceRange[0]"
+                        @input="updatePriceRange"
+                        class="price-slider"
+                        min="800"
+                        max="2100"
+                        step="50"
+                      />
+                      <input
+                        type="range"
+                        v-model="priceRange[1]"
+                        @input="updatePriceRange"
+                        class="price-slider"
+                        min="800"
+                        max="2100"
+                        step="50"
+                      />
+                    </div>
                   </div>
-                  
-                  <input
-                    type="range"
-                    v-model="priceRange[0]"
-                    @input="updatePriceRange"
-                    class="form-range"
-                  />
-                  <input
-                    type="range"
-                    v-model="priceRange[1]"
-                    @input="updatePriceRange"
-                    class="form-range"
-                  />
                 </div>
 
                 <div class="filter-divider"></div>
