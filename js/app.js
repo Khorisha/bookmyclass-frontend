@@ -667,8 +667,12 @@ let webstore = new Vue({
         });
         console.log("==============================");
 
-        // Prepare order data for backend
+        // Generate receipt ID for the order
+        const receiptId = "BMC-" + this.generateReceiptNumber();
+
+        // Prepare order data for backend with receiptId
         const orderData = {
+          receiptId: receiptId,
           customer: {
             parentName: this.checkoutInfo.parentName,
             phoneNumber: this.checkoutInfo.phone,
@@ -699,10 +703,9 @@ let webstore = new Vue({
           );
         }
 
-        // Create order confirmation data - FIXED: Use the generated receipt ID from backend
-        const receiptId = orderResult.orderId || "BMC-" + this.generateReceiptNumber();
+        // Create order confirmation data
         this.currentOrder = {
-          orderId: receiptId, // Use the consistent receipt ID
+          orderId: receiptId, // Use the generated receipt ID
           date: this.getCurrentDate(),
           parentName: this.checkoutInfo.parentName,
           phone: this.checkoutInfo.phone,
@@ -795,6 +798,11 @@ let webstore = new Vue({
       this.cart.splice(index, 1);
       this.cartCount--;
       console.log("Removed from cart:", item.lessonTitle);
+      
+      // NEW: Automatically go back to main page if cart becomes empty
+      if (this.cart.length === 0) {
+        this.showCartPage = false;
+      }
     },
 
     // Get lesson by ID
