@@ -346,11 +346,6 @@ let webstore = new Vue({
     // B. POST - Save order to backend
     async saveOrder(orderData) {
       try {
-        console.log('=== SENDING ORDER TO BACKEND ===');
-        console.log('Order data:', JSON.stringify(orderData, null, 2));
-        console.log('receiptId being sent:', orderData.receiptId);
-        console.log('================================');
-
         const response = await fetch(`${API_BASE_URL}/orders`, {
           method: "POST",
           headers: {
@@ -360,18 +355,11 @@ let webstore = new Vue({
         });
 
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Server response error:', errorText);
           throw new Error("Failed to save order");
         }
 
         const result = await response.json();
-        
-        console.log('=== RESPONSE FROM BACKEND ===');
-        console.log('Full response:', JSON.stringify(result, null, 2));
-        console.log('receiptId in response:', result.receiptId);
-        console.log('============================');
-        
+        console.log("Order saved successfully:", result);
         return result;
       } catch (error) {
         console.error("Error saving order:", error);
@@ -606,18 +594,6 @@ let webstore = new Vue({
       this.validateCheckoutForm();
     },
 
-    // FIX: Format CVV - only allow digits
-    formatCVV: function () {
-      // Remove any non-digit characters
-      let value = this.checkoutInfo.cvv.replace(/\D/g, "");
-      // Limit to 3 digits
-      if (value.length > 3) {
-        value = value.substring(0, 3);
-      }
-      this.checkoutInfo.cvv = value;
-      this.validateCheckoutForm();
-    },
-
     // Encryption for card details
     encryptCardData: function (data) {
       return data
@@ -640,29 +616,6 @@ let webstore = new Vue({
       return encrypted.toString();
     },
 
-    // Decryption for testing (card data)
-    decryptCardData: function (encryptedData) {
-      return encryptedData
-        .split("")
-        .map((char) => {
-          if (char.match(/[0-9]/)) {
-            return String.fromCharCode(
-              ((char.charCodeAt(0) - 48 - 5 + 10) % 10) + 48
-            );
-          }
-          return char;
-        })
-        .join("");
-    },
-
-    // Decryption for testing (CVV)
-    decryptCVV: function (encryptedCVV) {
-      let num = parseInt(encryptedCVV);
-      let decrypted = (num ^ 42) - 15;
-      decrypted = decrypted >> 2;
-      return decrypted.toString().padStart(3, "0");
-    },
-
     // Process checkout
     async processCheckout() {
       this.validateCheckoutForm();
@@ -682,23 +635,8 @@ let webstore = new Vue({
           cvv: this.encryptCVV(this.checkoutInfo.cvv),
         };
 
-        console.log("=== PAYMENT ENCRYPTION TEST ===");
-        console.log("Encrypted payment data:", encryptedCardData);
-        console.log("Decrypted for verification:", {
-          cardNumber: this.decryptCardData(encryptedCardData.cardNumber),
-          expiryDate: this.decryptCardData(encryptedCardData.expiryDate),
-          cvv: this.decryptCVV(encryptedCardData.cvv),
-        });
-        console.log("==============================");
-
-        // Generate receipt ID for the order
-        const receiptId = "BMC-" + this.generateReceiptNumber();
-        
-        console.log("Generated receiptId:", receiptId);
-
-        // Prepare order data for backend with receiptId
+        // Prepare order data for backend
         const orderData = {
-          receiptId: receiptId,
           customer: {
             parentName: this.checkoutInfo.parentName,
             phoneNumber: this.checkoutInfo.phone,
@@ -716,12 +654,8 @@ let webstore = new Vue({
           })),
         };
 
-        console.log("Order data prepared:", JSON.stringify(orderData, null, 2));
-
         // B. POST - Save order to backend
         const orderResult = await this.saveOrder(orderData);
-        
-        console.log("Order result received:", orderResult);
 
         // C. PUT - Update each lesson with the new booking
         for (const item of this.cart) {
@@ -733,9 +667,9 @@ let webstore = new Vue({
           );
         }
 
-        // Create order confirmation data
+        // Create order confirmation data 
         this.currentOrder = {
-          orderId: receiptId, 
+          orderId: orderResult.orderId,
           date: this.getCurrentDate(),
           parentName: this.checkoutInfo.parentName,
           phone: this.checkoutInfo.phone,
@@ -743,8 +677,6 @@ let webstore = new Vue({
           subtotal: this.calculateTotal(),
           total: this.calculateTotal(),
         };
-
-        console.log("Order confirmation created:", this.currentOrder);
 
         // Show confirmation modal
         const modal = new bootstrap.Modal(
@@ -845,11 +777,6 @@ let webstore = new Vue({
     // Calculate total
     calculateTotal: function () {
       return this.cart.reduce((total, item) => total + item.price, 0);
-    },
-
-    // Generate receipt number
-    generateReceiptNumber: function () {
-      return Math.random().toString(36).substr(2, 9).toUpperCase();
     },
 
     // Get current date
