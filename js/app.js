@@ -173,10 +173,7 @@ let webstore = new Vue({
   },
 
   methods: {
-    // ========== MERGE SORT IMPLEMENTATION ==========
-    // Manually implemented Merge Sort algorithm for sorting lessons
-    // Merge Sort is efficient and stable with O(n log n) time complexity
-
+    // Merge sort implementation
     mergeSort: function (
       array,
       sortBy = this.sortBy,
