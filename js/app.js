@@ -9,7 +9,7 @@ let webstore = new Vue({
     cart: [],
     currentSlide: 0,
     selectedCategory: "All",
-    priceRange: [20, 60],
+    priceRange: [800, 2100],
     sortBy: "subject",
     sortOrder: "asc",
     searchQuery: "",
