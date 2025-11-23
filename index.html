@@ -251,6 +251,8 @@
                                 :class="{ 'is-invalid': checkoutErrors.cvv }"
                                 placeholder="123"
                                 maxlength="3"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
                               />
                               <div
                                 class="invalid-feedback"
