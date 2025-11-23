@@ -845,6 +845,13 @@ let webstore = new Vue({
     },
 
     updatePriceRange: function () {
+      // Ensure the price range stays within valid bounds for Rs prices
+      if (this.priceRange[0] < 800) {
+        this.priceRange[0] = 800;
+      }
+      if (this.priceRange[1] > 2100) {
+        this.priceRange[1] = 2100;
+      }
       if (this.priceRange[0] > this.priceRange[1]) {
         this.priceRange[0] = this.priceRange[1];
       }
@@ -903,12 +910,31 @@ let webstore = new Vue({
         await this.fetchLessons();
       }
     },
+
+    // Initialize price range based on actual lesson prices
+    initializePriceRange: function () {
+      if (this.lessons.length > 0) {
+        const prices = this.lessons.map(lesson => 
+          lesson.discounted ? this.calculateDiscountedPrice(lesson) : lesson.price
+        );
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        
+        // Only update if the calculated range makes sense
+        if (minPrice >= 800 && maxPrice <= 2100) {
+          this.priceRange = [minPrice, maxPrice];
+        }
+      }
+    }
   },
 
   // Lifecycle hook - fetch lessons when app loads
   async created() {
     // A. GET - Fetch all lessons from backend
     await this.fetchLessons();
+
+    // Initialize price range based on actual lesson prices
+    this.initializePriceRange();
 
     // Check for expired discounts
     await this.checkExpiredDiscounts();
