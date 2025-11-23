@@ -705,7 +705,7 @@ let webstore = new Vue({
 
         // Create order confirmation data
         this.currentOrder = {
-          orderId: receiptId, // Use the generated receipt ID
+          orderId: receiptId, 
           date: this.getCurrentDate(),
           parentName: this.checkoutInfo.parentName,
           phone: this.checkoutInfo.phone,
