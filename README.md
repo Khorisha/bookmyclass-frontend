@@ -137,7 +137,7 @@ The website communicates with the backend using these REST API calls:
 ### File Structure
 ```
 frontend/
-├── index.html          # Main HTML file with all Vue.js templates and components
+├── index.html          # Main HTML file
 ├── css/
 │   └── style.css       # All custom styling and responsive design
 ├── js/
