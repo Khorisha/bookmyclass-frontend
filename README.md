@@ -96,8 +96,8 @@ BookMyClass is a website I built for my coursework that helps parents book after
 - Checkout is part of the shopping cart page (not lessons page)
 - "Checkout" button always visible but only enabled after valid "Name" and "Phone" are provided
 - **Form validation using JavaScript regular expressions**:
-  - Name must be letters only (regex: `/^[A-Za-z\s]+$/)`
-  - Phone must be numbers only (regex: `/^\d+$/)` with minimum 7 digits
+  - Name must be letters only (regex: `/^[A-Za-z\s]+$/`)
+  - Phone must be numbers only (regex: `/^\d+$/`) with minimum 7 digits
   - Card number validation (16 digits with formatting)
   - Expiry date validation (MM/YY format)
   - CVV validation (3 digits)
@@ -215,16 +215,4 @@ The Vue instance manages:
 - **Form Validation & Encryption**: Creating robust validation for different input types using regular expressions and implementing secure encryption algorithms for payment data protection
 - **Real-time Data Updates**: Ensuring all Vue components reactively update correctly when bookings are made, especially managing the complex `sessionsBooked` data structure and cart states
 - **State Management**: Handling the application state between search results, filtered results, and cart interactions while maintaining data consistency
-
-## What Makes This Special
-
-- **Custom Sorting Algorithm**: My own implementation of merge sort that handles complex sorting scenarios with multiple data types and custom comparison logic
-- **Intelligent Search**: Full-text search powered by backend MongoDB indexing that understands different search patterns and integrates seamlessly with existing filters
-- **Advanced Booking System**: Comprehensive tracking of child information and day-specific bookings with proper age validation and scheduling
-- **Smart Spaces Management**: Dynamic calculation of available spaces while maintaining detailed student records per day in the `sessionsBooked` array structure
-- **Age-Appropriate Booking**: Ensures children are placed in suitable classes based on age with proper validation (5-18 years)
-- **Secure Payment Processing**: Custom encryption algorithms for sensitive payment information with proper form validation
-- **Complete Order Management**: End-to-end booking process that preserves all child and scheduling details through to order confirmation
-- **Responsive Design**: Works seamlessly across different devices and screen sizes
-- **Real-time Updates**: Immediate feedback and state updates when bookings are made or modified
 
