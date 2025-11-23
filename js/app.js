@@ -346,6 +346,11 @@ let webstore = new Vue({
     // B. POST - Save order to backend
     async saveOrder(orderData) {
       try {
+        console.log('=== SENDING ORDER TO BACKEND ===');
+        console.log('Order data:', JSON.stringify(orderData, null, 2));
+        console.log('receiptId being sent:', orderData.receiptId);
+        console.log('================================');
+
         const response = await fetch(`${API_BASE_URL}/orders`, {
           method: "POST",
           headers: {
@@ -355,11 +360,18 @@ let webstore = new Vue({
         });
 
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Server response error:', errorText);
           throw new Error("Failed to save order");
         }
 
         const result = await response.json();
-        console.log("Order saved successfully:", result);
+        
+        console.log('=== RESPONSE FROM BACKEND ===');
+        console.log('Full response:', JSON.stringify(result, null, 2));
+        console.log('receiptId in response:', result.receiptId);
+        console.log('============================');
+        
         return result;
       } catch (error) {
         console.error("Error saving order:", error);
@@ -594,6 +606,18 @@ let webstore = new Vue({
       this.validateCheckoutForm();
     },
 
+    // FIX: Format CVV - only allow digits
+    formatCVV: function () {
+      // Remove any non-digit characters
+      let value = this.checkoutInfo.cvv.replace(/\D/g, "");
+      // Limit to 3 digits
+      if (value.length > 3) {
+        value = value.substring(0, 3);
+      }
+      this.checkoutInfo.cvv = value;
+      this.validateCheckoutForm();
+    },
+
     // Encryption for card details
     encryptCardData: function (data) {
       return data
@@ -669,6 +693,8 @@ let webstore = new Vue({
 
         // Generate receipt ID for the order
         const receiptId = "BMC-" + this.generateReceiptNumber();
+        
+        console.log("Generated receiptId:", receiptId);
 
         // Prepare order data for backend with receiptId
         const orderData = {
@@ -690,8 +716,12 @@ let webstore = new Vue({
           })),
         };
 
+        console.log("Order data prepared:", JSON.stringify(orderData, null, 2));
+
         // B. POST - Save order to backend
         const orderResult = await this.saveOrder(orderData);
+        
+        console.log("Order result received:", orderResult);
 
         // C. PUT - Update each lesson with the new booking
         for (const item of this.cart) {
@@ -713,6 +743,8 @@ let webstore = new Vue({
           subtotal: this.calculateTotal(),
           total: this.calculateTotal(),
         };
+
+        console.log("Order confirmation created:", this.currentOrder);
 
         // Show confirmation modal
         const modal = new bootstrap.Modal(
@@ -799,7 +831,7 @@ let webstore = new Vue({
       this.cartCount--;
       console.log("Removed from cart:", item.lessonTitle);
       
-      // NEW: Automatically go back to main page if cart becomes empty
+      // Automatically go back to main page if cart becomes empty
       if (this.cart.length === 0) {
         this.showCartPage = false;
       }
