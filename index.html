@@ -86,7 +86,7 @@
                         <div class="item-main">
                           <div class="item-image">
                             <img
-                              :src="'http://localhost:3000/lesson-icons/' + getLessonById(item.lessonId).subject.toLowerCase() + '.png'"
+                              :src="'https://bookmyclass-backend.onrender.com/lesson-icons/' + getLessonById(item.lessonId).subject.toLowerCase() + '.png'"
                               :alt="getLessonById(item.lessonId).subject"
                               class="img-fluid"
                             />
@@ -368,18 +368,18 @@
                       <input
                         type="range"
                         class="form-range price-slider"
-                        min="20"
-                        max="60"
-                        step="5"
+                        min="800"
+                        max="2100"
+                        step="100"
                         v-model="priceRange[0]"
                         @input="updatePriceRange"
                       />
                       <input
                         type="range"
                         class="form-range price-slider"
-                        min="20"
-                        max="60"
-                        step="5"
+                        min="800"
+                        max="2100"
+                        step="100"
                         v-model="priceRange[1]"
                         @input="updatePriceRange"
                       />
@@ -454,7 +454,7 @@
                   </div>
                   <div class="banner-image">
                     <img
-                      src="http://localhost:3000/assets/banner-image.png"
+                      src="https://bookmyclass-backend.onrender.com/assets/banner-image.png"
                       alt="Kids learning"
                       class="img-fluid"
                     />
@@ -495,7 +495,7 @@
                           <div class="card-top">
                             <div class="subject-image">
                               <img
-                                :src="'http://localhost:3000/lesson-icons/' + lesson.subject.toLowerCase() + '.png'"
+                                :src="'https://bookmyclass-backend.onrender.com/lesson-icons/' + lesson.subject.toLowerCase() + '.png'"
                                 :alt="lesson.subject"
                                 class="img-fluid"
                               />
@@ -605,7 +605,7 @@
                         <div class="card-top">
                           <div class="subject-image">
                             <img
-                              :src="'http://localhost:3000/lesson-icons/' + lesson.subject.toLowerCase() + '.png'"
+                              :src="'https://bookmyclass-backend.onrender.com/lesson-icons/' + lesson.subject.toLowerCase() + '.png'"
                               :alt="lesson.subject"
                               class="img-fluid"
                             />
